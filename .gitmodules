@@ -1,0 +1,3 @@
+[submodule "JulietX"]
+	path = JulietX
+	url = git@github.com:Eycer-usb/JulietX.git
