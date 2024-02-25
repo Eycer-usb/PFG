@@ -1,3 +1,6 @@
 [submodule "JulietX"]
 	path = JulietX
 	url = git@github.com:Eycer-usb/JulietX.git
+[submodule "scaphandre"]
+	path = scaphandre
+	url = git@github.com:hubblo-org/scaphandre.git
