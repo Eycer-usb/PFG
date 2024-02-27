@@ -15,9 +15,7 @@ install(){
     sudo mkdir /opt/scaphandre
     sudo mv target/debug/scaphandre /opt/scaphandre
     sudo chmod +x /opt/scaphandre/scaphandre
-    cd - || exit
-    
-    # Uncomment line bellow to store in path
+    cd - || exit    
 }
 
 run() {
@@ -26,12 +24,12 @@ run() {
     sudo chmod +x init.sh
     ./init.sh
     cd - || exit
-
-    scaphandre prometheus >> /dev/null &
+    sudo konsole -e /opt/scaphandre/scaphandre prometheus &
     scaphandreId=$!
     echo "Scaphandre exporter process started with id: $scaphandreId"
+    sleep 5s
 
-    docker run --network="host" -v "$(pwd)"/prometheus:/etc/prometheus prom/prometheus >> /dev/null &
+    konsole -e docker run --network="host" -v "$(pwd)"/prometheus:/etc/prometheus prom/prometheus &
     prometheusId=$!
     echo "Prometheus process started with id: $prometheusId"
 }

@@ -4,3 +4,6 @@
 [submodule "scaphandre"]
 	path = scaphandre
 	url = git@github.com:hubblo-org/scaphandre.git
+[submodule "client_monitor/joularjx"]
+	path = client_monitor/joularjx
+	url = https://github.com/joular/joularjx.git
