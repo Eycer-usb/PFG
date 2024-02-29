@@ -31,9 +31,13 @@ def main():
     start_time = sys.argv[3]    # Analysis start time
     end_time = sys.argv[4]  # Analysis end time
 
-    # Fetch metrics from Prometheus
-    metrics = prom.fetch_metric_range(metric=query, start_timestamp=start_time, end_timestamp=end_time)
-    print("metrics")
+    #pid if defined
+    if(len(sys.argv) == 6):
+        pid=sys.argv[5]
+        metrics = prom.get_power_metrics_pid_range(pid, start_time, end_time)
+    else:
+        metrics = prom.fetch_metric_range(query, start_timestamp=start_time, end_timestamp=end_time)
+
     print(metrics)
 
     # Calculate power consumption
