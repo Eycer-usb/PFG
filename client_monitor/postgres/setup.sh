@@ -5,12 +5,8 @@
 ################################################################################
 
 DB_NAME=tpch
-DATA_FILE=./tpch-dbgen
-DATA_URL_REPO=https://github.com/electrum/tpch-dbgen
-DATA_URL_FILE=archive/32f1c1b92d1664dba542e927d23d86ffa57aa253.zip
-DATA_URL=$DATA_URL_REPO/$DATA_URL_FILE
-INDEX_RESET_PATH=../benchmark/optimization/reset.sql
-INDEX_OPTIMIZATION_PATH=../benchmark/optimization/index.sql
+INDEX_RESET_PATH=src/optimization/reset.sql
+INDEX_OPTIMIZATION_PATH=src/optimization/index.sql
 
 initialize_db() {
 
@@ -37,6 +33,7 @@ PSQL
 }
 
 create_indexes() {
+
     sudo -u postgres psql <<PSQL
 \c tpch;
 $(cat $INDEX_OPTIMIZATION_PATH);
@@ -46,52 +43,43 @@ PSQL
 
 main() {
 
-    cd tpch-pgsql || exit
-
     ./compression_setup.sh
-
-    cd tpch-pgsql
 
     # if compression is enabled, then compress database
     echo "Compression: $2"
-    if [ $2 = "compress" ]; then
+    if [ "$2" = "compress" ]; then
         echo ""
         echo "Load Database (with compression)"
         echo "--------------------------------"
-        cd ..
         ./compression_setup.sh -c
-        cd tpch-pgsql
+        cd tpch-pgsql || exit
         python3 tpch_pgsql.py load
         PGPASSWORD=******** psql -U tpch -d tpch -h localhost -f query_root/prep_query/force_compress.sql -t
     else
         echo ""
         echo "Load Database (without compression)"
         echo "--------------------------------"
-        cd ..
         ./compression_setup.sh -d
-        cd tpch-pgsql
+        cd tpch-pgsql || exit
         python3 tpch_pgsql.py load '-z'
     fi
 
     echo ""
     echo "Copy Queries"
     echo "--------------------------------"
-    queries_folder="../benchmark/queries"
+    queries_folder="../src/queries"
     if [ ! -d "$queries_folder" ]; then
         mkdir -p $queries_folder
     fi
     cp -r query_root/perf_query_gen/* $queries_folder
     echo "Copied"
+    cd ..
 
     ################################################################################
     # OPTIMIZATIONS
     ################################################################################
 
-    echo ""
-    echo "Insert Optimizations?"
-    echo "--------------------------------"
-
-    if [ $1 = "index" ]; then
+    if [ "$1" = "index" ]; then
         echo "Index optimization enabled"
         create_indexes
     else
@@ -113,14 +101,14 @@ main() {
     fi
     size_mb=$(PGPASSWORD=******** psql -U tpch -d tpch -h localhost -t -c "SELECT pg_size_pretty(pg_database_size(datname)) as db_usage FROM pg_database WHERE datname = 'tpch';")
     echo "size_mb: $size_mb"
-    if [ $2 = "compress" ]; then
-        if [ $1 = "index" ]; then
+    if [ "$2" = "compress" ]; then
+        if [ "$1" = "index" ]; then
             echo "compress-index,$size_mb" >>${folder}/postgresql_disk_usage.csv
         else
             echo "compress-no_index,$size_mb" >>${folder}/postgresql_disk_usage.csv
         fi
     else
-        if [ $1 = "index" ]; then
+        if [ "$1" = "index" ]; then
             echo "no_compress-index,$size_mb" >>$folder/postgresql_disk_usage.csv
         else
             echo "no_compress-no_index,$size_mb" >>$folder/postgresql_disk_usage.csv

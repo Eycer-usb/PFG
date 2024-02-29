@@ -1,4 +1,4 @@
-package benchmark;
+package src.java;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;

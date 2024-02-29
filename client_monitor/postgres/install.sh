@@ -6,7 +6,7 @@ JOULARJX_INSTALLATION_PATH=/opt/joularjx
 chmod +x ./*.sh
 
 # Utils Tools
-sudo apt install -y postgresql-common postgresql-client-14 postgresql-14 postgresql-server-dev-14 postgresql-contrib
+sudo apt install -y postgresql-common postgresql-client-14 postgresql-14 postgresql-server-dev-14 postgresql-contrib postgresql-server-dev-all
 sudo apt install -y openjdk-17-jdk openjdk-17-jre
 sudo apt install -y bc
 
@@ -54,7 +54,7 @@ else
 fi
 
 sudo chmod -R 777 .
-pip3 install -r requirements.txt
+pip3 install -r ../../python_requirements.txt
 
 
 python3 tpch_pgsql.py prepare

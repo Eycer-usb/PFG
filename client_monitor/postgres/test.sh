@@ -70,13 +70,6 @@ if [ ! -d "$query_folder" ]; then
 	mkdir -p "$query_folder"
 fi
 
-echo "timestamp,pid,cpu_usage_mean,cpu_usage_std,cpu_usage_ci_l,cpu_usage_ci_u,read_count_mean,read_count_std,read_count_ci_l,read_count_ci_u" >${folder}_client_metrics.csv
-echo "timestamp,pg_cpu_usage_mean,pg_cpu_usage_std,pg_cpu_usage_ci_l,pg_cpu_usage_ci_u,pg_read_count_mean,pg_read_count_std,pg_read_count_ci_l,pg_read_count_ci_u" >${folder}_postgres_metrics.csv
-echo "runtime" >"${folder}"_runtime.csv
-echo "Iterations, Energy (Joules)" >"${folder}"_juliet_postgres.csv
-echo "Iterations, Energy (Joules)" >"${folder}"_juliet_java.csv
-
-
 # Retrive files funtion
 retrieve_files() {
 	file_name=$1
@@ -94,42 +87,29 @@ retrieve_files() {
 }
 
 # Run test
-echo "########################################################################"
-for i in $(seq 1 $num_iterations); do
+# Storing Iteration Intervals
+intervals_file=$folder.intervals.csv
+echo iteration, start_time, end_time, runtime > "$intervals_file"
+for i in $(seq 1 "$num_iterations"); do
 
 	echo "Restarting postgres"
 	sudo systemctl restart postgresql
 
 	echo "Running java program at iteration $i"
-	echo $@
+	echo "$@"
 	# Start time in nanoseconds
 	start_time=$(date +%s%N)
-	echo "Starting Server Power consumption analysis"
-	echo "" >>${folder}_juliet_postgres.txt
-	echo "########### Iteration $i #######" >>${folder}_juliet_postgres.txt
-	echo "########### Iteration $i #######" >>${folder}_juliet_java.txt
-	sudo ./juliet/juliet postgres >>${folder}_juliet_postgres.txt &
-	sudo ./juliet/juliet java >>${folder}_juliet_java.txt &
-	sudo java -javaagent:$jar -cp $dependency:. $@ &
+	sudo java -javaagent:$jar -cp "$dependency":. "$@" &
 	java_pid=$!
-	python3 python/os_metrics.py ${java_pid} >>${folder}_client_metrics.csv &
-	python3 python/os_metrics.py -p >>${folder}_postgres_metrics.csv 2>>log_mos.txt &
 	wait ${java_pid}
 	sudo systemctl restart postgresql
-	sudo pkill -10 juliet
-	tail -n 1 ${folder}_juliet_postgres.txt | sed -e "s/Energy consumed by process: /$i,/" -e "s/ J//" >>${folder}_juliet_postgres.csv
-	tail -n 1 ${folder}_juliet_java.txt | sed -e "s/Energy consumed by process: /$i,/" -e "s/ J//" >>${folder}_juliet_java.csv
 	
 	# End time in nanoseconds
 	end_time=$(date +%s%N)
 
-	# signal interrupt to os_metrics
-	# kill -INT $cs_pid
-
-	# Run time in nanoseconds
 	run_time=$(echo "$end_time - $start_time" | bc)
-	# store run time
-	echo $run_time >>${folder}_runtime.csv
+
+	echo "$i", "$start_time", "$end_time", "$run_time"  >> "$intervals_file"
 
 	# Files to retrieve
 	declare -A files
@@ -149,16 +129,17 @@ for i in $(seq 1 $num_iterations); do
 	done
 done
 
-# Givin permission to all files
+# Giving permission to all files
 sudo chmod -R 777 jx_results
 
-# trap "trap - SIGTERM && kill -- -$$ > /dev/null 2>&1" SIGINT SIGTERM EXIT
-echo "########################################################################"
+env_activate() {
+	source ../../env/bin/activate
+}
 
 ################################################################################
 # DATA ANALYSIS
 ################################################################################
-
+env_activate
 # Used to gather power and engery consumption data using JoularJX and save it
 # CSV file.
 python3 jx_gatherData.py "jx_results/"
@@ -171,21 +152,3 @@ python3 jx_gatherData.py "jx_results/"
 # breaks down the data into individual methods and calculates the energy and
 # power consumed by each method.
 python3 jx_process_level_methods.py "metrics/query_${query_number}/${query_optimization}-jx_process_level_methods.csv"
-
-# Used to perform a Shapiro-Wilk test on the energy consumption data to check
-# for normality.
-#python3 shapiro_wilk_test_energy.py
-
-# Used to perform a Shapiro-Wilk test on the power consumption data to check
-# for normality.
-#python3 shapiro_wilk_test_power.py
-
-################################################################################
-# DATA STORE
-################################################################################
-
-#query_result_dir=${query_dir}/${query_optimization}
-#mkdir -p $query_result_dir
-#mkdir -p $query_result_dir/graphs
-
-#cp jx_graphs/* $query_result_dir/graphs

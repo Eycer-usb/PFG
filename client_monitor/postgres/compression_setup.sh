@@ -45,13 +45,13 @@ main() {
     echo "Config file location: $PG_CONF"
 
     # Get config file directory
-    PG_CONF_DIR=$(dirname $PG_CONF)
+    PG_CONF_DIR=$(dirname "$PG_CONF")
 
     # Add compress.conf to PG_CONF conf.d directory
     if test -f "$PG_CONF/conf.d/compress.conf"; then
         echo "Config file already exists"
     else
-        sudo cp $COMPRESS_CONFIG_FILE $PG_CONF_DIR/conf.d/
+        sudo cp $COMPRESS_CONFIG_FILE "$PG_CONF_DIR"/conf.d/
     fi
 }
 
@@ -92,10 +92,10 @@ decompress() {
     echo "Decompress Database"
     echo "--------------------------------"
     PG_CONF=$(PGPASSWORD=******** psql -U tpch -d tpch -t -P format=unaligned -c 'show config_file' -h localhost)
-    PG_CONF_DIR=$(dirname $PG_CONF)
+    PG_CONF_DIR=$(dirname "$PG_CONF")
 
     # Add '#' to compress.conf
-    sudo sed -i 's/^/#/' $PG_CONF_DIR/conf.d/compress.conf
+    sudo sed -i 's/^/#/' "$PG_CONF_DIR"/conf.d/compress.conf
     # Decompress database
     # Restart postgresql service
     #sudo service postgresql restart
@@ -110,10 +110,10 @@ compress() {
     echo "Compress Database"
     echo "--------------------------------"
     PG_CONF=$(PGPASSWORD=******** psql -U tpch -d tpch -t -P format=unaligned -c 'show config_file' -h localhost)
-    PG_CONF_DIR=$(dirname $PG_CONF)
+    PG_CONF_DIR=$(dirname "$PG_CONF")
 
     # Remove '#' from compress.conf
-    sudo sed -i 's/^#//' $PG_CONF_DIR/conf.d/compress.conf
+    sudo sed -i 's/^#//' "$PG_CONF_DIR"/conf.d/compress.conf
     # Compress database
     # Restart postgresql service
     #sudo service postgresql restart
@@ -127,9 +127,9 @@ compress() {
 if [ $# -eq 0 ]; then
     main
 # else if -c argument, run compress
-elif [ $1 = "-c" ]; then
+elif [ "$1" = "-c" ]; then
     compress
 # else if -d argument, run decompress
-elif [ $1 = "-d" ]; then
+elif [ "$1" = "-d" ]; then
     decompress
 fi
