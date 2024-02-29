@@ -1,15 +1,7 @@
 from prometheus_api_client import PrometheusConnect
 import datetime
 import sys 
-
-def fetch_metrics(prometheus_url, query, start_time, end_time):
-    # Connect to Prometheus server
-    prom = PrometheusConnect(url=prometheus_url, disable_ssl=True)
-
-    # Query Prometheus for the metric
-    # result = prom.custom_query_range(query, start_time=start_time, end_time=end_time)
-    result = prom.custom_query()
-    return result
+from PrometheusCollector import PrometheusCollector
 
 def calculate_power_consumption(metrics):
     # Perform your power consumption calculation based on the metrics
@@ -31,6 +23,8 @@ def main():
     
     
     prometheus_url = sys.argv[1]  # Update with Prometheus server URL
+    prom = PrometheusCollector(prometheus_url)
+
     query = sys.argv[2]  # Update with the metric name from Scaphandre
 
     # Set the time range for the query
@@ -38,12 +32,14 @@ def main():
     end_time = sys.argv[4]  # Analysis end time
 
     # Fetch metrics from Prometheus
-    metrics = fetch_metrics(prometheus_url, query, start_time, end_time)
+    metrics = prom.fetch_metric_range(metric=query, start_timestamp=start_time, end_timestamp=end_time)
+    print("metrics")
+    print(metrics)
 
     # Calculate power consumption
-    power_consumption = calculate_power_consumption(metrics)
+    # power_consumption = calculate_power_consumption(metrics)
 
-    print(f"Power Consumption: {power_consumption} watts")
+    # print(f"Power Consumption: {power_consumption} watts")
 
 if __name__ == "__main__":
     main()
