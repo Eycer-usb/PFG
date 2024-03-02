@@ -99,4 +99,17 @@ public class PGDB {
         String file = Files.readAllLines(path).stream().reduce("", (a, b) -> a + "\n" + b);
         execute(file);
     }
+
+    public String getConnectionPid() throws SQLException{
+        return this.querySingle("SELECT pg_backend_pid();");
+    }
+
+    public void close() throws SQLException{
+        try {
+            this.conn.close();
+        } catch (Exception e) {
+            System.out.println("Error Closing Connection");
+        }
+    }
+
 }
