@@ -12,6 +12,7 @@ public class Query {
         // Constants
         Integer queryNum = 22;
         Integer maxStreams = Runtime.getRuntime().availableProcessors();
+        String[] header = {"iteration", "pid", "start_time", "end_time", "runtime"};
 
         // Variables (Defaults)
         Boolean verbose = true;
@@ -20,7 +21,9 @@ public class Query {
         Integer numStreams = maxStreams;
         Boolean debug = false;
         String queriesFolderPath = "src/queries";
-        Boolean multipleConections = true; // Change this to false to use a single postgres connection
+        String objetiveFile = null;
+        Boolean multipleConections = false;
+        Integer iteration = -1;
 
         // Process args
         int i = 0;
@@ -70,7 +73,20 @@ public class Query {
                 String value = args[i].split("=")[1];
                 queriesFolderPath = value;
                 
-            }
+            } else if (args[i].startsWith("i=")) {
+                iteration = Integer.valueOf(args[i].split("=")[1]);
+            } else if (args[i].startsWith("o=")) {
+                objetiveFile = args[i].split("=")[1];
+            } else if (args[i].startsWith("m=")) {
+                String value = args[i].split("=")[1];
+                if (value.equalsIgnoreCase("true") ||
+                        value.equalsIgnoreCase("1")) {
+                    multipleConections = true;
+                } else if (value.equalsIgnoreCase("false") ||
+                        value.equalsIgnoreCase("0")) {
+                    verbose = false;
+                }
+            }        
              else {
                 System.out.println("Undefined argument");
                 print_help();
@@ -81,9 +97,11 @@ public class Query {
 
         // Start tests
         PGDB pgdb = null;
+        String pgPid = null;
+        Register register = new Register( objetiveFile, header, iteration );
         if(!multipleConections){
             pgdb = PGDBConnector(verbose);
-            String pgPid = pgdb.getConnectionPid();
+            pgPid = pgdb.getConnectionPid();
             System.out.println("Postgres Process ID: " + pgPid);
         }
         Integer[] runtimePerStream = {};
@@ -93,7 +111,16 @@ public class Query {
                     + "\nquery = " + query + ""
                     + "\nnumStreams = " + numStreams + "");
         if (throughput) {
-            throughputTest(pgdb, query, numStreams, runtimePerStream, queriesFolderPath, verbose);
+            Timestamp startTest = Query.getCurrentTimestamp();
+            throughputTest(pgdb, query, numStreams, runtimePerStream, queriesFolderPath, verbose, register);
+            Timestamp endTest = Query.getCurrentTimestamp();
+            if (!multipleConections) {
+                String[] line = { pgPid, 
+                    Long.toString(startTest.getTime()), Long.toString(endTest.getTime()), 
+                    Long.toString(Query.getDuration(startTest, endTest))
+                };
+                register.storeCSVLine(line);
+            }
         }
         if (!throughput) {
             System.out.println("Doing nothing...");
@@ -106,13 +133,17 @@ public class Query {
 
     private static void print_help() {
         System.out
-            .println("Usage: java Query [v=<true|false>] [t=<true|false>] [f=<string>] [q=<1-22>] [s=<1-11>]");
+            .println("Usage: java Query [v=<true|false>] [t=<true|false>] [f=<string>] [q=<1-22>] [s=<1-11>] [i=<iteration number>] [o=<objetive file path>] [m=<true|false>]");
         System.out.println("v: verbose");
         System.out.println("t: throughput test");
         System.out.println("q: query number");
         System.out.println("s: number of streams");
-        System.out.println("f: queries folder path");
-
+        System.out.println("h: this help message");
+        System.out.println("d: run in debug mode");
+        System.out.println("f: Queries Folder path");
+        System.out.println("i: iteration number");
+        System.out.println("o: objetive file path to register results");
+        System.out.println("m: multiple database connection (one per thread)");;
     }
 
     private static PGDB PGDBConnector(Boolean verbose) throws Exception {
@@ -172,7 +203,9 @@ public class Query {
             Integer numStreams,
             Integer[] runtimePerStream,
             String queryFolderPath,
-            Boolean verbose) throws InterruptedException {
+            Boolean verbose,
+            Register register) throws InterruptedException {
+
         ExecutorService service = Executors.newFixedThreadPool(numStreams);
 
         if (verbose) {
@@ -181,11 +214,11 @@ public class Query {
         for (int i = 0; i < numStreams; i++) {
             int stream = i + 1;
             try {
-                String textHelper = "Throughput tests in stream ";
                 if (verbose) {
+                    String textHelper = "Throughput tests in stream ";
                     System.out.println(textHelper + stream + " started ...");
                 }
-                service.submit(new RunnableTask(pgdb, query, queryFolderPath));
+                service.submit(new RunnableTask(pgdb, query, queryFolderPath, register));
             } catch (Exception e) {
                 String textHelper = "Error running inner throughput test: ";
                 System.out.println(textHelper + e.getMessage());
@@ -213,11 +246,14 @@ public class Query {
 
 
 class RunnableTask implements Runnable {
+
     public PGDB pgdb;
     public Integer query;
     public String queryFolderPath;
     public Boolean multiConnection = true;
-    public RunnableTask(PGDB pgdb, Integer query, String queryFolderPath){ 
+    public Register register = null;
+
+    public RunnableTask(PGDB pgdb, Integer query, String queryFolderPath, Register register){ 
         try {
             if(pgdb == null){
                 this.multiConnection = true; 
@@ -238,6 +274,7 @@ class RunnableTask implements Runnable {
         
         this.query = query;
         this.queryFolderPath = queryFolderPath;
+        this.register = register;
     }
 
     @Override
@@ -245,20 +282,19 @@ class RunnableTask implements Runnable {
         try {
             System.out.println("Running inner throughput test, Thread ID: "
                     + Thread.currentThread().getId() + " ...");
+                    
             Timestamp start = Query.getCurrentTimestamp();
-            if(this.multiConnection) {
-                String pgPid = this.pgdb.getConnectionPid();
-                System.out.println("Postgres Connection Process ID: " + pgPid);
-            }
             Query.queryStream(this.pgdb, this.query, this.queryFolderPath);
             Timestamp end = Query.getCurrentTimestamp();
-            String message = "Runtime for thread " + 
-                Thread.currentThread().getId() + ": " +
-                Query.getDuration(start, end);
-
-            System.out.println(message);
 
             if (this.multiConnection) {
+                String pgPid = pgdb.getConnectionPid();
+                String runtime = Long.toString(Query.getDuration(start, end));
+                String[] line = { 
+                    pgPid, Long.toString(start.getTime()), 
+                    Long.toString(end.getTime()), runtime 
+                };
+                this.register.storeCSVLine(line);
                 this.pgdb.close();
             }
 
