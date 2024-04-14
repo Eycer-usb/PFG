@@ -1,11 +1,6 @@
 package com.pfg.postgres;
 
-import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class Query {
 
