@@ -17,7 +17,7 @@ OBJ_DIR := bin
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES)) \
 
 # Executable file
-EXECUTABLE := juliet
+EXECUTABLE := julietX
 
 # Default target
 all: $(OBJ_DIR) $(EXECUTABLE)
