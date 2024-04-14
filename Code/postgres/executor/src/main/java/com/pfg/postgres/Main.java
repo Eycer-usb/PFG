@@ -5,16 +5,16 @@ import java.io.Reader;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import com.pfg.library.Observer;
-import com.pfg.library.Colector;
+import com.pfg.library.Collector;
 
 public class Main {
 
     static JSONObject jsonConfig;
     static String[] results = {};
-    static Observer clientObserverConnection;
-    static Observer serverObserverConnection;
-    static Colector colectorConnection;
-    static PGDB pgConnection;
+    static Observer clientObserver;
+    static Observer serverObserver;
+    static Collector collector;
+    static PGDB pg;
 
     public static void main(String[] args) throws Exception {
 
@@ -41,34 +41,34 @@ public class Main {
             System.exit(-1);
         }
 
-        setDatabaseConnection();
-        setClientObserverConnection();
-        setServerObserverConnection();
-        setColectorConnection();
+        setDatabase();
+        setClientObserver();
+        setServerObserver();
+        setCollector();
     }
 
-    private static void setDatabaseConnection() {
+    private static void setDatabase() {
         JSONObject databaseConfig = (JSONObject) jsonConfig.get("database");
-        pgConnection = PGDB.connectionFromConfig(databaseConfig);
+        pg = new PGDB(databaseConfig);
     }
 
-    private static void setClientObserverConnection() {
+    private static void setClientObserver() {
         JSONObject clientObserverConfig = (JSONObject) jsonConfig.get("clientObserver");
-        clientObserverConnection = Observer.connectionFromConfig(clientObserverConfig);
+        clientObserver = new Observer(clientObserverConfig);
     }
 
-    private static void setServerObserverConnection() {
+    private static void setServerObserver() {
         JSONObject serverObserverConfig = (JSONObject) jsonConfig.get("ServerObserver");
-        serverObserverConnection = Observer.connectionFromConfig(serverObserverConfig);
+        serverObserver = new Observer(serverObserverConfig);
     }
 
-    private static void setColectorConnection() {
-        JSONObject colectorConfig = (JSONObject) jsonConfig.get("collector");
-        colectorConnection = Colector.connectionFromConfig(colectorConfig);
+    private static void setCollector() {
+        JSONObject collectorConfig = (JSONObject) jsonConfig.get("collector");
+        collector = new Collector(collectorConfig);
     }
 
     private static void execute() {
-        
+                
     }
 
     private static void print_help() {
