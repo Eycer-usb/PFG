@@ -2,12 +2,10 @@ package com.pfg.postgres;
 
 import java.io.FileReader;
 import java.io.Reader;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.pfg.library.Observer;
+import com.pfg.library.Colector;
 
 public class Main {
 
@@ -34,8 +32,14 @@ public class Main {
 
     private static void loadConfigs(String configFilePath) {
         JSONParser parser = new JSONParser();
-        Reader reader = new FileReader(configFilePath);
-        jsonConfig = (JSONObject) parser.parse(reader);
+        try{
+            Reader reader = new FileReader(configFilePath);
+            jsonConfig = (JSONObject) parser.parse(reader);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.exit(-1);
+        }
 
         setDatabaseConnection();
         setClientObserverConnection();
@@ -60,7 +64,7 @@ public class Main {
 
     private static void setColectorConnection() {
         JSONObject colectorConfig = (JSONObject) jsonConfig.get("collector");
-        colectorConnection = Observer.connectionFromConfig(colectorConfig);
+        colectorConnection = Colector.connectionFromConfig(colectorConfig);
     }
 
     private static void execute() {

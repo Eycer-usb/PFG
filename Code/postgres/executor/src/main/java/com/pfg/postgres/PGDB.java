@@ -38,7 +38,7 @@ public class PGDB {
         }
     }
 
-    protected static PGDB connectionFromConfig(JSONObject pgdbConfig) throws Exception {
+    protected static PGDB connectionFromConfig(JSONObject pgdbConfig) {
 
         String host = (String) pgdbConfig.get("host");
         Integer port = (Integer) pgdbConfig.get("port");

@@ -7,6 +7,7 @@
     <groupId>com.pfg.postgres</groupId>
     <artifactId>postgres-executor</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -27,6 +28,13 @@
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.pfg.library</groupId>
+            <artifactId>connectors</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -39,7 +47,7 @@
                     <archive>
                         <manifest>
                             <mainClass>
-                                com.pfg.library.Main
+                                com.pfg.postgres.Main
                             </mainClass>
                         </manifest>
                     </archive>
@@ -47,5 +55,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
