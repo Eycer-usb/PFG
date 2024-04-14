@@ -64,7 +64,7 @@ public class Main {
     }
 
     private static void execute() {
-        // Execute Query and send Reports
+        
     }
 
     private static void print_help() {
