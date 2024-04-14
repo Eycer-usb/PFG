@@ -1,11 +1,11 @@
 package com.pfg.postgres;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
+
+import org.json.simple.JSONObject;
 
 /**
  * A very simple PostgreSQL database client.
@@ -20,35 +20,49 @@ public class PGDB {
     // constructor
 
     /**
-     * @param host The host name of the database server.
-     * @param port The port number of the database server.
-     * @param user The username to use for authentication.
+     * @param host     The host name of the database server.
+     * @param port     The port number of the database server.
+     * @param user     The username to use for authentication.
      * @param password The password to use for authentication.
      * @param database The name of the database to connect to.
      * @throws SQLException
      */
-    public PGDB(String host, int port, String user, String password, String database) 
-        throws SQLException, IOException {
+    public PGDB(String host, int port, String user, String password, String database)
+            throws SQLException, IOException {
         String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
         try {
             Class.forName("org.postgresql.Driver");
             conn = DriverManager.getConnection(url, user, password);
         } catch (Exception e) {
-            printLog(e + "\n");
+            throw new SQLException("Error in connection");
         }
     }
 
-    private static void printLog(String msg) throws IOException {
+    protected static PGDB connectionFromConfig(JSONObject pgdbConfig) throws Exception {
+
+        String host = (String) pgdbConfig.get("host");
+        Integer port = (Integer) pgdbConfig.get("port");
+        String user = (String) pgdbConfig.get("user");
+        String password = (String) pgdbConfig.get("password");
+        String database = (String) pgdbConfig.get("database");
+
         try {
-            FileWriter fWriter = new FileWriter("log.txt", true);
-            BufferedWriter bWriter = new BufferedWriter(fWriter);
-            bWriter.write(msg);
-            bWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            PGDB pgdb = new PGDB(
+                    host,
+                    port,
+                    user,
+                    password,
+                    database);
+
+            System.out.println("Connected to database.");
+            return pgdb;
+
+        } catch (Exception e) {
+            String textHelper = "Error connecting to database: ";
+            System.out.println(textHelper + e.getMessage());
+            return null;
         }
     }
-
 
     /**
      * Executes a SQL statement.
@@ -100,16 +114,18 @@ public class PGDB {
         execute(file);
     }
 
-    public String getConnectionPid() throws SQLException{
+    public String getConnectionPid() throws SQLException {
         return this.querySingle("SELECT pg_backend_pid();");
     }
 
-    public void close() throws SQLException{
+    public void close() throws SQLException {
         try {
             this.conn.close();
         } catch (Exception e) {
             System.out.println("Error Closing Connection");
         }
     }
+
+    
 
 }
