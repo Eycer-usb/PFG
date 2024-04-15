@@ -29,6 +29,7 @@ private:
     void startMonitoring( char* message );
     void stopMonitoring();
     void reportToCollector( char* message );
+    void sendSuccess();
 
 public:
     Executor( map<string, string> config );

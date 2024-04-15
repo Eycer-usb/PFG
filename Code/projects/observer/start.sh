@@ -8,4 +8,4 @@ make all
 
 # run 
 chmod +x julietX
-sudo -E ./julietX
+./julietX

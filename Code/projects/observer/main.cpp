@@ -16,7 +16,7 @@ map<string, string> config; // Configurations
 void getConfigFromEnvironment()
 {
 
-    printf(TITLE "Setting Configurations" END);
+    printf(TITLE "Setting Configurations" ENDL);
     const vector<string> variable{
         "SOCKET_PORT",
         "EXECUTOR_PORT",
@@ -33,7 +33,7 @@ void getConfigFromEnvironment()
         }
         else
         {
-            printf(ERROR "Error: Environment Variable %s undefined" END, key);
+            printf(ERROR "Error: Environment Variable %s undefined" ENDL, key);
             exit(EXIT_FAILURE);
         }
     }
@@ -42,7 +42,7 @@ void getConfigFromEnvironment()
 // Main function of the program
 int main(int argc, char const *argv[])
 {
-    printf(SUCCESS "JuletX Monitor Tool Started!" END);
+    printf(TITLE "JuletX Monitor Tool Started!" ENDL);
     // Error handling
     if (argc != 1)
     {
