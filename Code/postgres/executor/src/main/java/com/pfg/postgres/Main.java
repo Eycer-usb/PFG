@@ -49,7 +49,7 @@ public class Main {
 
     private static void setDatabase() {
         JSONObject databaseConfig = (JSONObject) jsonConfig.get("database");
-        pg = new PGDB(databaseConfig);
+        pg = PGDB.connectionFromConfig(databaseConfig);
     }
 
     private static void setClientObserver() {
