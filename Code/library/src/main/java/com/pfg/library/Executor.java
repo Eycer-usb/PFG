@@ -1,12 +1,8 @@
 package com.pfg.library;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.sql.Timestamp;
-
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 public class Executor {
     JSONObject jsonConfig;
@@ -15,27 +11,16 @@ public class Executor {
     Collector collector;
     Database database = null;
 
-    Executor(Database database){
+    public Executor(Database database, JSONObject config){
         this.database = database;
-    }
-
-    protected void loadConfigs(String configFilePath) {
-        JSONParser parser = new JSONParser();
-        try {
-            Reader reader = new FileReader(configFilePath);
-            jsonConfig = (JSONObject) parser.parse(reader);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-
+        this.jsonConfig = config;
         setClientObserver();
         setServerObserver();
         setCollector();
-    }
+    } 
 
     @SuppressWarnings("unchecked")
-    protected void execute() {
+    public void execute() {
         String clientPid = null;
         String serverPid = null;
         try {
@@ -104,10 +89,5 @@ public class Executor {
 
     protected long getDuration(Timestamp startTime, Timestamp endTime) {
         return endTime.getTime() - startTime.getTime();
-    }
-
-    protected static void print_help() {
-        System.out
-                .println("Usage: java -jar target/postgres-executor.1.0-SNAPSHOT.jar <config.json>");
     }
 }

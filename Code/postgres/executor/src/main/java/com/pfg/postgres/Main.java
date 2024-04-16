@@ -1,11 +1,10 @@
 package com.pfg.postgres;
 
-import java.io.FileReader;
-import java.io.Reader;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import com.pfg.library.Observer;
+import com.pfg.library.Utils;
 import com.pfg.library.Collector;
+import com.pfg.library.Executor;
 
 public class Main {
 
@@ -18,57 +17,17 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        String configFilePath = "";
-
         if (args.length < 2) {
             print_help();
             System.exit(-1);
         } else {
-            configFilePath = args[1];
-            loadConfigs(configFilePath);
-            execute();
+            String configFilePath = args[1];
+            JSONObject config = Utils.getJsonObjectFromFile(configFilePath);
+            PGDB postgresDatabase = new PGDB(config);
+            Executor executor = new Executor(postgresDatabase, config);
+            executor.execute();
+            postgresDatabase.close();
         }
-    }
-
-    private static void loadConfigs(String configFilePath) {
-        JSONParser parser = new JSONParser();
-        try{
-            Reader reader = new FileReader(configFilePath);
-            jsonConfig = (JSONObject) parser.parse(reader);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            System.exit(-1);
-        }
-
-        setDatabase();
-        setClientObserver();
-        setServerObserver();
-        setCollector();
-    }
-
-    private static void setDatabase() {
-        JSONObject databaseConfig = (JSONObject) jsonConfig.get("database");
-        pg = PGDB.connectionFromConfig(databaseConfig);
-    }
-
-    private static void setClientObserver() {
-        JSONObject clientObserverConfig = (JSONObject) jsonConfig.get("clientObserver");
-        clientObserver = new Observer(clientObserverConfig);
-    }
-
-    private static void setServerObserver() {
-        JSONObject serverObserverConfig = (JSONObject) jsonConfig.get("ServerObserver");
-        serverObserver = new Observer(serverObserverConfig);
-    }
-
-    private static void setCollector() {
-        JSONObject collectorConfig = (JSONObject) jsonConfig.get("collector");
-        collector = new Collector(collectorConfig);
-    }
-
-    private static void execute() {
-                
     }
 
     private static void print_help() {

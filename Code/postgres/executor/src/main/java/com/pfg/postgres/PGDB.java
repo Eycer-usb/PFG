@@ -7,6 +7,8 @@ import java.sql.*;
 
 import org.json.simple.JSONObject;
 
+import com.pfg.library.Database;
+
 /**
  * A very simple PostgreSQL database client.
  *
@@ -14,9 +16,10 @@ import org.json.simple.JSONObject;
  *
  * @constructor Creates a new PostgreSQL database client.
  */
-public class PGDB {
+public class PGDB implements Database{
 
     private Connection conn;
+    private JSONObject databaseConfig;
     // constructor
 
     /**
@@ -25,42 +28,21 @@ public class PGDB {
      * @param user     The username to use for authentication.
      * @param password The password to use for authentication.
      * @param database The name of the database to connect to.
-     * @throws SQLException
      */
-    public PGDB(String host, int port, String user, String password, String database)
+    public PGDB(JSONObject config)
             throws SQLException, IOException {
-        String url = "jdbc:postgresql://" + host + ":" + port + "/" + database;
+        databaseConfig = (JSONObject) config.get("database");
+        String host = (String) databaseConfig.get("host");
+        String port = (String) databaseConfig.get("port");
+        String databaseName = (String) databaseConfig.get("name");
+        String user = (String) databaseConfig.get("user");
+        String password = (String) databaseConfig.get("password");
+        String url = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
         try {
             Class.forName("org.postgresql.Driver");
             conn = DriverManager.getConnection(url, user, password);
         } catch (Exception e) {
             throw new SQLException("Error in connection");
-        }
-    }
-
-    protected static PGDB connectionFromConfig(JSONObject pgdbConfig) {
-
-        String host = (String) pgdbConfig.get("host");
-        Integer port = (Integer) pgdbConfig.get("port");
-        String user = (String) pgdbConfig.get("user");
-        String password = (String) pgdbConfig.get("password");
-        String database = (String) pgdbConfig.get("database");
-
-        try {
-            PGDB pgdb = new PGDB(
-                    host,
-                    port,
-                    user,
-                    password,
-                    database);
-
-            System.out.println("Connected to database.");
-            return pgdb;
-
-        } catch (Exception e) {
-            String textHelper = "Error connecting to database: ";
-            System.out.println(textHelper + e.getMessage());
-            return null;
         }
     }
 
@@ -112,13 +94,9 @@ public class PGDB {
         Path path = new File(filename).toPath();
         String file = Files.readAllLines(path).stream().reduce("", (a, b) -> a + "\n" + b);
         execute(file);
-    }
+    }   
 
-    public String getConnectionPid() throws SQLException {
-        return this.querySingle("SELECT pg_backend_pid();");
-    }
-
-    public void close() throws SQLException {
+    public void close() {
         try {
             this.conn.close();
         } catch (Exception e) {
@@ -126,6 +104,34 @@ public class PGDB {
         }
     }
 
-    
+    public String getConnectionPid() {
+        try {
+            return this.querySingle("SELECT pg_backend_pid();");
+        } catch (Exception e) {
+            System.err.println(e);
+            System.exit(-1);
+        }
+        return "";
+    }
+
+    public String getDatabaseKey(){
+        return "postgres";
+    }
+    public String getOptimizationKey(){
+        return (String) this.databaseConfig.get("optimization");
+    };
+
+    public String getQueryKey(){
+        return (String) this.databaseConfig.get("optimization");
+    };
+    public void runQuery(){
+        String queryPath = (String) this.databaseConfig.get("query");
+        try {
+            this.executeFile(queryPath);
+        } catch (Exception e) {
+            System.err.println(e);
+            System.exit(-1);
+        }
+    };
 
 }
