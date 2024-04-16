@@ -38,3 +38,4 @@ fi
 
 sudo chmod -R 777 .
 python3 tpch_pgsql.py prepare
+cd ..

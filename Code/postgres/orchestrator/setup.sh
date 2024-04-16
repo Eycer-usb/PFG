@@ -5,8 +5,8 @@
 ################################################################################
 
 DB_NAME=tpch
-INDEX_RESET_PATH=src/optimization/reset.sql
-INDEX_OPTIMIZATION_PATH=src/optimization/index.sql
+INDEX_RESET_PATH=optimization/reset.sql
+INDEX_OPTIMIZATION_PATH=optimization/index.sql
 
 initialize_db() {
 
@@ -48,7 +48,7 @@ main() {
     # if compression is enabled, then compress database
     echo "Compression: $2"
     if [ "$2" = "compress" ]; then
-        echo ""
+        echo "--------------------------------"
         echo "Load Database (with compression)"
         echo "--------------------------------"
         ./compression_setup.sh -c
@@ -64,17 +64,6 @@ main() {
         python3 tpch_pgsql.py load '-z'
     fi
 
-    echo ""
-    echo "Copy Queries"
-    echo "--------------------------------"
-    queries_folder="../src/queries"
-    if [ ! -d "$queries_folder" ]; then
-        mkdir -p $queries_folder
-    fi
-    cp -r query_root/perf_query_gen/* $queries_folder
-    echo "Copied"
-    cd ..
-
     ################################################################################
     # OPTIMIZATIONS
     ################################################################################
@@ -85,34 +74,6 @@ main() {
     else
         echo "No optimization, removing all default indexes ..."
         reset_indexes
-    fi
-
-    ################################################################################
-    # POSTGRESQL DISK USAGE
-    ################################################################################
-
-    cd .. | exit
-    folder="metrics"
-    if [ ! -d "$folder" ]; then
-        mkdir -p $folder
-    fi
-    if [ ! -f "$folder/postgresql_disk_usage.csv" ]; then
-        echo "optimization,size" >${folder}/postgresql_disk_usage.csv
-    fi
-    size_mb=$(PGPASSWORD=******** psql -U tpch -d tpch -h localhost -t -c "SELECT pg_size_pretty(pg_database_size(datname)) as db_usage FROM pg_database WHERE datname = 'tpch';")
-    echo "size_mb: $size_mb"
-    if [ "$2" = "compress" ]; then
-        if [ "$1" = "index" ]; then
-            echo "compress-index,$size_mb" >>${folder}/postgresql_disk_usage.csv
-        else
-            echo "compress-no_index,$size_mb" >>${folder}/postgresql_disk_usage.csv
-        fi
-    else
-        if [ "$1" = "index" ]; then
-            echo "no_compress-index,$size_mb" >>$folder/postgresql_disk_usage.csv
-        else
-            echo "no_compress-no_index,$size_mb" >>$folder/postgresql_disk_usage.csv
-        fi
     fi
 
     echo "Done"

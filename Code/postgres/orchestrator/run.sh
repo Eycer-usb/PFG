@@ -4,48 +4,29 @@
 # CONFIGS
 ################################################################################
 
-# Test config
-num_iterations=30
-# The empty string is the default optimization (base) with no indexes and no compression
 optimizations=("--base" "--index" "--compress" "--index-compress")
-
-# Build config
-dependency=src/java/postgresql-42.6.0.jar
-requirements="src/java/PGDB.java src/java/Register.java"
-query_java=src/java/Query.java
-java_program=src.java.Query
-
-# Program config
-verbose=false
-run_power=false
-run_throughput=true
 n_query=22
-n_streams=2
-
-################################################################################
-# BUILD
-################################################################################
-
-javac -cp $dependency $requirements $query_java
-
-################################################################################
-# TEST
-################################################################################
-mkdir metrics_old
-mv metrics/* metrics_old
-rm -rf metrics
-mkdir -p metrics
-
+num_iterations=30
+jar_file=executor.jar
+config_file=config.json
 
 echo "Running each query individually with all optimizations"
 for optimization in "${!optimizations[@]}"; do
 sudo systemctl restart postgresql
-    # DB Setup
     echo "Setting up database with optimization ""${optimizations[$optimization]}"
     ./setup.sh "${optimizations[$optimization]}"
-
-    for i in $(seq 1 $n_query); do
-        ./test.sh $num_iterations $dependency "$i" "${optimizations[$optimization]}" $java_program \
-            v=$verbose t=$run_throughput q="$i" s=$n_streams
+    for query in $(seq 1 $n_query); do
+        for iteration in $(seq 1 $num_iterations); do
+            generate_config_file "${optimizations[$optimization]}" query_$query $iteration
+            sudo systemctl restart postgresql
+            echo Optimization: "${optimizations[$optimization]}", Query: "$query", Iteration: "$iteration", 
+            java -jar $jar_file
+            sudo systemctl restart postgresql
+        done
     done
 done
+
+
+generate_config_file() {
+
+}
