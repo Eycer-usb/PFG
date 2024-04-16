@@ -1,7 +1,9 @@
 #!/bin/bash
 
-server=false
+maven=false
+postgres=false
 client=false
+
 
 # Usage Instructions
 print_usage() {
@@ -18,10 +20,11 @@ if [[ $# -eq 0 ]]; then
 fi
 
 # Options Processor
-while getopts 'csh' flag; do
+while getopts 'cpmh' flag; do
   case "${flag}" in
   c) client=true ;;
-  s) server=true ;;
+  p) postgres=true ;;
+  m) maven=true ;;
   h)
     print_usage
     exit 1
@@ -31,23 +34,9 @@ while getopts 'csh' flag; do
   esac
 done
 
-# Server Side Dependencies Instalation
-if [ ${server} = true ]; then
-  sudo apt install -y postgresql-common \
-    postgresql-client-14 \
-    postgresql-14 \
-    postgresql-server-dev-14 \
-    postgresql-contrib \
-    postgresql-server-dev-all
-fi
+# Install Maven
 
-# Client Side Dependencies Instalation
-if [ ${client} = true ]; then
-  sudo apt install -y openjdk-17-jdk \
-    openjdk-17-jre \
-    bc
-
-  # Maven Instalation
+if [ $maven  = true]; then
   mvn -version
   if [ ! $? -eq 0 ]; then
     wget https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
@@ -65,5 +54,25 @@ if [ ${client} = true ]; then
   else
     echo "Maven Already Installed"
   fi
+fi
 
+# Client Side Dependencies Instalation
+if [ ${client} = true ]; then
+  sudo apt install -y openjdk-17-jdk \
+    openjdk-17-jre \
+    bc
+
+  cd ../../library
+  mvn clean install package
+fi
+
+
+# Postgres Dependencies Instalation
+if [ ${postgres} = true ]; then
+  sudo apt install -y postgresql-common \
+    postgresql-client-14 \
+    postgresql-14 \
+    postgresql-server-dev-14 \
+    postgresql-contrib \
+    postgresql-server-dev-all
 fi
