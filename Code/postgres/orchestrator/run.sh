@@ -10,6 +10,15 @@ num_iterations=30
 jar_file=executor.jar
 config_file=config.json
 
+generate_config_file() {
+    cat <<EOF > $config_file
+    {
+        
+    }
+    EOF
+}
+
+
 echo "Running each query individually with all optimizations"
 for optimization in "${!optimizations[@]}"; do
 sudo systemctl restart postgresql
@@ -27,6 +36,3 @@ sudo systemctl restart postgresql
 done
 
 
-generate_config_file() {
-
-}
