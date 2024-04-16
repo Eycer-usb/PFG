@@ -16,22 +16,19 @@ public class Observer {
     }
 
     public boolean connect() {
-        System.out.println("Starting Connection");
         String address = (String) config.get("address");
         int port = Integer.parseInt((String) config.get("port"));
+        System.out.println("Connecting " + address + ":" + port);
         try {
-            System.out.println("Starting Socket");
             this.socket = new Socket(address, port);
-            System.out.println("Starting Data Input Stream");
             input = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
-            System.out.println("Starting Data Output Stream");
             output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
         }
-        System.out.println("Connection Done");
+        System.out.println("Connection done");
         return true;
     }
 
@@ -63,4 +60,33 @@ public class Observer {
         }
         return false;
     }
+
+    void startMonitoring(String processPid){
+        System.out.println("Sending Start Monitor Order for Pid: " + processPid);
+        String response = this.send("1" + processPid);
+        if (response != "0") {
+            System.out.print("Failed");
+            System.exit(-1);
+        }
+    }
+
+    void stopMonitoring(){
+        System.out.println("Sending Stop Monitor Order");
+        String response = this.send("2");
+        if (response != "0") {
+            System.out.print("Failed");
+            System.exit(-1);
+        }
+    }
+
+    void reportMetrics(String registryId) {
+        System.out.println("Sending Report Metrics Order");
+        String response = this.send("3");
+        if (response != "0") {
+            System.out.print("Failed");
+            System.exit(-1);
+        }
+    }
+
+
 }
