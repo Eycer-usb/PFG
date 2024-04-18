@@ -13,7 +13,7 @@ public class Executor {
 
     public Executor(Database database, JSONObject config){
         this.database = database;
-        this.jsonConfig = config;
+        this.jsonConfig = (JSONObject) config.get("executor");
         setClientObserver();
         setServerObserver();
         setCollector();
@@ -72,7 +72,7 @@ public class Executor {
     }
 
     protected void setServerObserver() {
-        JSONObject serverObserverConfig = (JSONObject) jsonConfig.get("ServerObserver");
+        JSONObject serverObserverConfig = (JSONObject) jsonConfig.get("serverObserver");
         serverObserver = new Observer(serverObserverConfig);
         serverObserver.connect();
     }

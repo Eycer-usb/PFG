@@ -41,7 +41,7 @@ main() {
     echo "--------------------------------"
 
     # Get config file location
-    PG_CONF=$(PGPASSWORD=******** psql -U tpch -d tpch -t -P format=unaligned -c 'show config_file' -h localhost)
+    PG_CONF=$(PGPASSWORD=$database_password psql -U $database_user -d $database_user -t -P format=unaligned -c 'show config_file' -h $database_host)
     echo "Config file location: $PG_CONF"
 
     # Get config file directory
@@ -59,7 +59,7 @@ check_compression() {
     echo ""
     echo "Check if compression/decompression is working"
     echo "--------------------------------"
-    PG_EXT=$(PGPASSWORD=******** psql -U tpch -d tpch -t -P format=unaligned -c 'show shared_preload_libraries' -h localhost)
+    PG_EXT=$(PGPASSWORD=$database_password psql -U $database_user -d $database_user -t -P format=unaligned -c 'show shared_preload_libraries' -h $database_host)
     if [[ $1 == "compress" ]]; then
         if [[ $PG_EXT == *"pg_squeeze"* ]]; then
             echo "pg_squeeze extension loaded, compression success"
@@ -91,7 +91,7 @@ decompress() {
     echo ""
     echo "Decompress Database"
     echo "--------------------------------"
-    PG_CONF=$(PGPASSWORD=******** psql -U tpch -d tpch -t -P format=unaligned -c 'show config_file' -h localhost)
+    PG_CONF=$(PGPASSWORD=$database_password psql -U $database_user -d $database_user -t -P format=unaligned -c 'show config_file' -h $database_host)
     PG_CONF_DIR=$(dirname "$PG_CONF")
 
     # Add '#' to compress.conf
@@ -99,7 +99,7 @@ decompress() {
     # Decompress database
     # Restart postgresql service
     #sudo service postgresql restart
-    sudo systemctl restart postgresql
+    sudo systemctl restart $database_service_name
 
     # Check if compression is working
     check_compression decompress
@@ -109,7 +109,7 @@ compress() {
     echo ""
     echo "Compress Database"
     echo "--------------------------------"
-    PG_CONF=$(PGPASSWORD=******** psql -U tpch -d tpch -t -P format=unaligned -c 'show config_file' -h localhost)
+    PG_CONF=$(PGPASSWORD=$database_password psql -U $database_user -d $database_user -t -P format=unaligned -c 'show config_file' -h $database_host)
     PG_CONF_DIR=$(dirname "$PG_CONF")
 
     # Remove '#' from compress.conf
@@ -117,7 +117,7 @@ compress() {
     # Compress database
     # Restart postgresql service
     #sudo service postgresql restart
-    sudo systemctl restart postgresql
+    sudo systemctl restart $database_service_name
 
     # Check if compression is working
     check_compression compress

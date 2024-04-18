@@ -4,28 +4,28 @@
 # CONFIGS AND ARGUMENTS
 ################################################################################
 
-DB_NAME=tpch
+DB_NAME=$database_name
 INDEX_RESET_PATH=optimization/reset.sql
 INDEX_OPTIMIZATION_PATH=optimization/index.sql
 
 initialize_db() {
 
-    sudo -u postgres psql <<PSQL
+    sudo -u $database_user psql <<PSQL
 DROP DATABASE IF EXISTS $DB_NAME;
 DROP USER IF EXISTS $DB_NAME;
 CREATE USER $DB_NAME SUPERUSER;
 CREATE DATABASE $DB_NAME;
 PSQL
 
-    sudo -u postgres psql <<PSQL
-ALTER USER $DB_NAME WITH ENCRYPTED PASSWORD '********';
+    sudo -u $database_user psql <<PSQL
+ALTER USER $DB_NAME WITH ENCRYPTED PASSWORD '$database_password';
 GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_NAME;
 \q
 PSQL
 }
 
 reset_indexes() {
-    sudo -u postgres psql <<PSQL
+    sudo -u $database_user psql <<PSQL
 \c tpch;
 $(cat $INDEX_RESET_PATH);
 \q
@@ -34,7 +34,7 @@ PSQL
 
 create_indexes() {
 
-    sudo -u postgres psql <<PSQL
+    sudo -u $database_user psql <<PSQL
 \c tpch;
 $(cat $INDEX_OPTIMIZATION_PATH);
 \q
@@ -54,7 +54,7 @@ main() {
         ./compression_setup.sh -c
         cd tpch-pgsql || exit
         python3 tpch_pgsql.py load
-        PGPASSWORD=******** psql -U tpch -d tpch -h localhost -f query_root/prep_query/force_compress.sql -t
+        PGPASSWORD=$database_password psql -U tpch -d tpch -h localhost -f query_root/prep_query/force_compress.sql -t
     else
         echo ""
         echo "Load Database (without compression)"

@@ -3,17 +3,16 @@
 # Preparing Postgresql
 echo Preparing Postgresql Database...
 
-DB_NAME=tpch
-sudo -u postgres psql <<PSQL
-DROP DATABASE IF EXISTS $DB_NAME;
-DROP USER IF EXISTS $DB_NAME;
-CREATE USER $DB_NAME SUPERUSER;
-CREATE DATABASE $DB_NAME;
+sudo -u $database_user psql <<PSQL
+DROP DATABASE IF EXISTS $database_name;
+DROP USER IF EXISTS $database_name;
+CREATE USER $database_name SUPERUSER;
+CREATE DATABASE $database_name;
 PSQL
 
-    sudo -u postgres psql <<PSQL
-ALTER USER $DB_NAME WITH ENCRYPTED PASSWORD '********';
-GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_NAME;
+    sudo -u $database_user psql <<PSQL
+ALTER USER $database_name WITH ENCRYPTED PASSWORD '$database_password';
+GRANT ALL PRIVILEGES ON DATABASE $database_name TO $database_name;
 \q
 PSQL
 

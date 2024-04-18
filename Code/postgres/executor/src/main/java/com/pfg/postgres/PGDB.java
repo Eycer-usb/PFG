@@ -122,10 +122,10 @@ public class PGDB implements Database{
     };
 
     public String getQueryKey(){
-        return (String) this.databaseConfig.get("optimization");
+        return (String) this.databaseConfig.get("queryKey");
     };
     public void runQuery(){
-        String queryPath = (String) this.databaseConfig.get("query");
+        String queryPath = (String) this.databaseConfig.get("queryPath");
         try {
             this.executeFile(queryPath);
         } catch (Exception e) {
