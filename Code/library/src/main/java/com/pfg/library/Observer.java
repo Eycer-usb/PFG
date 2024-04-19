@@ -2,9 +2,6 @@ package com.pfg.library;
 
 import org.json.simple.JSONObject;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.io.*;
 
 public class Observer {
