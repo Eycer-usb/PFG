@@ -44,6 +44,7 @@ public class PGDB implements Database{
         } catch (Exception e) {
             throw new SQLException("Error in connection");
         }
+        System.out.println("Database Connection Success");
     }
 
     /**

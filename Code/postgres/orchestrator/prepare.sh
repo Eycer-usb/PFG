@@ -3,14 +3,14 @@
 # Preparing Postgresql
 echo Preparing Postgresql Database...
 
-sudo -u $database_user psql <<PSQL
+sudo -u postgres psql <<PSQL
 DROP DATABASE IF EXISTS $database_name;
 DROP USER IF EXISTS $database_name;
 CREATE USER $database_name SUPERUSER;
 CREATE DATABASE $database_name;
 PSQL
 
-    sudo -u $database_user psql <<PSQL
+    sudo -u postgres psql <<PSQL
 ALTER USER $database_name WITH ENCRYPTED PASSWORD '$database_password';
 GRANT ALL PRIVILEGES ON DATABASE $database_name TO $database_name;
 \q

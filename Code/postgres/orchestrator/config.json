@@ -3,14 +3,14 @@
         "host": "localhost",
         "port": "5432",
         "name": "tpch",
-        "user": "postgres",
+        "user": "tpch",
         "password": "********",
-        "optimization": "--index-compress",
-        "queryKey": "22",
-        "queryPath": "queries/22.sql"
+        "optimization": "--base",
+        "queryKey": "1",
+        "queryPath": "queries/1.sql"
     },
     "executor": {
-        "iteration": "30",
+        "iteration": "2",
         "clientObserver": {
             "address": "192.168.2.102",
             "port": "43316"

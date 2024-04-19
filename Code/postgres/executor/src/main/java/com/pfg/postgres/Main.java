@@ -17,11 +17,11 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length < 2) {
+        if (args.length < 1) {
             print_help();
             System.exit(-1);
         } else {
-            String configFilePath = args[1];
+            String configFilePath = args[0];
             JSONObject config = Utils.getJsonObjectFromFile(configFilePath);
             PGDB postgresDatabase = new PGDB(config);
             Executor executor = new Executor(postgresDatabase, config);
