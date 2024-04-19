@@ -81,7 +81,7 @@ public class Observer {
 
     void reportMetrics(String registryId) {
         System.out.println("Sending Report Metrics Order");
-        String response = this.send("3");
+        String response = this.send("3" + registryId);
         if (response != "0") {
             System.out.print("Failed");
             System.exit(-1);

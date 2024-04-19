@@ -24,9 +24,10 @@ public class Executor {
         String clientPid = null;
         String serverPid = null;
         try {
-            clientPid = this.getOwnPid();
+            clientPid = getOwnPid();
             serverPid = this.database.getConnectionPid();
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Error Getting Process Ids");
             System.exit(-1);
         }
@@ -35,9 +36,9 @@ public class Executor {
         this.clientObserver.startMonitoring(clientPid);
         this.serverObserver.startMonitoring(serverPid);
 
-        Timestamp startTimestamp = this.getCurrentTimestamp();
+        Timestamp startTimestamp = getCurrentTimestamp();
         this.database.runQuery();
-        Timestamp endTimestamp = this.getCurrentTimestamp();
+        Timestamp endTimestamp = getCurrentTimestamp();
 
         this.clientObserver.stopMonitoring();
         this.serverObserver.stopMonitoring();
@@ -51,17 +52,15 @@ public class Executor {
         directive.put("serverPid", serverPid);
         directive.put("startTimestamp", startTimestamp);
         directive.put("endTimestamp", endTimestamp);
-        directive.put("executionTime", this.getDuration(startTimestamp, endTimestamp));
+        directive.put("executionTime", getDuration(startTimestamp, endTimestamp));
 
         String registryId = this.collector.storeDirective( directive );
         this.clientObserver.reportMetrics(registryId);
         this.serverObserver.reportMetrics(registryId);
     }
 
-    private String getOwnPid() throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "path");
-        Process p = pb.start();
-        long pid = p.pid();
+    public static String getOwnPid() throws IOException {
+        long pid = ProcessHandle.current().pid();
         return Long.toString(pid);
     }
 
@@ -82,12 +81,12 @@ public class Executor {
         collector = new Collector(collectorConfig);
     }
 
-    protected Timestamp getCurrentTimestamp() {
+    public static Timestamp getCurrentTimestamp() {
         final Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
         return currentTimestamp;
     }
 
-    protected long getDuration(Timestamp startTime, Timestamp endTime) {
+    public static long getDuration(Timestamp startTime, Timestamp endTime) {
         return endTime.getTime() - startTime.getTime();
     }
 }
