@@ -2,6 +2,9 @@ package com.pfg.library;
 
 import org.json.simple.JSONObject;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.*;
 
 public class Observer {
@@ -13,6 +16,10 @@ public class Observer {
 
     public Observer(JSONObject config) {
         this.config = config;
+    }
+
+    public JSONObject getConfig() {
+        return this.config;
     }
 
     public boolean connect() {
@@ -28,7 +35,7 @@ public class Observer {
             e.printStackTrace();
             System.exit(-1);
         }
-        System.out.println("Connection done");
+        System.out.println("Connected");
         return true;
     }
 
@@ -47,13 +54,16 @@ public class Observer {
     }
 
     public boolean disconnect() {
+        System.out.println("Disconnecting...");
         String response = this.send("9");
-        if (response == "0") {
+        if (response.equals("0")) {
             try {
                 socket.close();
                 input.close();
                 output.close();
+                System.out.println("Disconnected");
                 return true;
+
             } catch (Exception e) {
                 System.err.println(e);
             }
@@ -64,29 +74,25 @@ public class Observer {
     void startMonitoring(String processPid){
         System.out.println("Sending Start Monitor Order for Pid: " + processPid);
         String response = this.send("1" + processPid);
-        if (response != "0") {
-            System.out.print("Failed");
-            System.exit(-1);
-        }
+        this.checkCorrectResponse(response);
     }
 
     void stopMonitoring(){
         System.out.println("Sending Stop Monitor Order");
         String response = this.send("2");
-        if (response != "0") {
-            System.out.print("Failed");
-            System.exit(-1);
-        }
+        this.checkCorrectResponse(response);
     }
 
     void reportMetrics(String registryId) {
         System.out.println("Sending Report Metrics Order");
         String response = this.send("3" + registryId);
-        if (response != "0") {
+        this.checkCorrectResponse(response);
+    }
+
+    private void checkCorrectResponse(String response) {
+        if (!response.equals("0")) {
             System.out.print("Failed");
             System.exit(-1);
         }
     }
-
-
 }

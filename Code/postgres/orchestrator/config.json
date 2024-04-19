@@ -5,22 +5,22 @@
         "name": "tpch",
         "user": "tpch",
         "password": "********",
-        "optimization": "--base",
-        "queryKey": "1",
-        "queryPath": "queries/1.sql"
+        "optimization": "--index",
+        "queryKey": "2",
+        "queryPath": "queries/2.sql"
     },
     "executor": {
-        "iteration": "2",
+        "iteration": "14",
         "clientObserver": {
             "address": "192.168.2.102",
-            "port": "43316"
+            "port": "43318"
         },
         "serverObserver": {
             "address": "192.168.2.102",
-            "port": "43317"
+            "port": "43319"
         },
         "collector": {
-            "endpoint": "http://192.168.2.102:8000/directives/add"
+            "endpoint": "http://192.168.2.102:43317/directives/add"
         }
     }
 }

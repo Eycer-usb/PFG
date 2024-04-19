@@ -1,0 +1,12 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": "5432",
+        "name": "tpch",
+        "user": "tpch",
+        "password": "********",
+        "optimization": "--index",
+        "queryKey": "2",
+        "queryPath": "src/test/resources/2.sql"
+    }
+}

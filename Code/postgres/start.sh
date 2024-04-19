@@ -8,4 +8,4 @@ cd ..
 cp executor/target/*-executor-*jar-with-dependencies.jar orchestrator/$jar_file
 
 cd orchestrator
-sudo -E ./run.sh
+#sudo -E ./run.sh
