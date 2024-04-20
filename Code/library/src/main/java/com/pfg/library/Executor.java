@@ -26,6 +26,9 @@ public class Executor {
         try {
             clientPid = getOwnPid();
             serverPid = this.database.getConnectionPid();
+            System.out.println("Client Pid: " + clientPid);
+            System.out.println("Server Pid: " + serverPid);
+
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error Getting Process Ids");
@@ -37,10 +40,14 @@ public class Executor {
         this.serverObserver.startMonitoring(serverPid);
 
         Timestamp startTimestamp = getCurrentTimestamp();
+        System.out.println("Timestamp: " + startTimestamp);
         this.database.runQuery();
         Timestamp endTimestamp = getCurrentTimestamp();
+        System.out.println("Timestamp: " + endTimestamp);
 
+        System.out.println("Stopping Client Observer");
         this.clientObserver.stopMonitoring();
+        System.out.println("Stopping Server Observer");
         this.serverObserver.stopMonitoring();
 
         JSONObject directive = new JSONObject();
