@@ -30,9 +30,7 @@ public class DirectiveController {
 
     @PostMapping("/add")
     public ResponseEntity<Directive> saveDirective(@RequestBody Directive directive) {
-        System.out.println("Request " + directive);
         Directive newDirective = directiveService.saveDirective(directive);
-        System.out.println(newDirective);
         return ResponseEntity.ok(newDirective);
     }
 
