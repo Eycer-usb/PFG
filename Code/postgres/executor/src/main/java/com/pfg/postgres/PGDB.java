@@ -127,6 +127,7 @@ public class PGDB implements Database{
     };
     
     public void runQuery(){
+        System.out.println("Running Query");
         String queryPath = (String) this.databaseConfig.get("queryPath");
         try {
             this.executeFile(queryPath);
@@ -134,6 +135,7 @@ public class PGDB implements Database{
             System.err.println(e);
             System.exit(-1);
         }
+        System.out.println("Done");
     };
 
 }

@@ -2,6 +2,9 @@
 
 export $(grep -v '^#' environment.env |  xargs -d '\n')
 
+cd ../library
+mvn clean install package
+cd -
 cd executor
 mvn clean install package
 cd ..

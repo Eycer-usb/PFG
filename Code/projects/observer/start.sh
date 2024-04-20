@@ -1,5 +1,6 @@
 #!/bin/bash
-
+while [ 1 ]
+do
 # Importing environment variables
 export $(grep -v '^#' environment.env | xargs -0)
 
@@ -12,3 +13,5 @@ gnome-terminal -- ./julietX
 
 export SOCKET_PORT=43319
 ./julietX
+
+done
