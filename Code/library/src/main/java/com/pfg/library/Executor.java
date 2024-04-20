@@ -57,8 +57,8 @@ public class Executor {
         directive.put("iteration", (String) this.jsonConfig.get("iteration"));
         directive.put("clientPid", clientPid);
         directive.put("serverPid", serverPid);
-        directive.put("startTimestamp", startTimestamp);
-        directive.put("endTimestamp", endTimestamp);
+        directive.put("startTime", startTimestamp);
+        directive.put("endTime", endTimestamp);
         directive.put("executionTime", getDuration(startTimestamp, endTimestamp));
 
         String registryId = this.collector.storeDirective( directive );

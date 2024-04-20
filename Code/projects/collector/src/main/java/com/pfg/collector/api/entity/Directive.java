@@ -10,6 +10,10 @@ public class Directive {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @Column(nullable = false)
+    private String databaseKey;
+
     @Column(nullable = false)
     private String optimizationKey;
 
@@ -32,8 +36,7 @@ public class Directive {
     private String endTime;
 
     @Column(nullable = false)
-    private String dbType;
-
+    private String executionTime;
 
     // Getters and Setters
 
@@ -65,12 +68,16 @@ public class Directive {
         return this.endTime;
     }
 
-    public String getDbType(){
-        return this.dbType;
+    public String getDatabaseKey(){
+        return this.databaseKey;
     }
 
     public String getQueryKey(){
         return this.queryKey;
+    }
+
+    public String getExecutionTime(){
+        return this.executionTime;
     }
     
     public void setId(Long value){
@@ -101,12 +108,16 @@ public class Directive {
         this.endTime = value;
     }
 
-    public void setDbType(String value){
-        this.dbType = value;
+    public void setDatabaseKey(String value){
+        this.databaseKey = value;
     }
 
     public void setQueryKey(String value){
         this.queryKey = value;
+    }
+
+    public void setExecutionTime(String value){
+        this.executionTime = value;
     }
 
     

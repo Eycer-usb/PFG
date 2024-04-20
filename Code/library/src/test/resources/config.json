@@ -10,7 +10,7 @@
             "port": "43319"
         },
         "collector": {
-            "endpoint": "http://192.168.2.102:43317/directives/add"
+            "endpoint": "http://localhost:43317/api/v1/directives/add"
         }
     }
 }

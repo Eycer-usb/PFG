@@ -9,7 +9,7 @@ make all
 
 # run 
 chmod +x julietX
-gnome-terminal -- ./julietX
+gnome-terminal -- bash -c "./julietX;bash"
 
 export SOCKET_PORT=43319
 ./julietX

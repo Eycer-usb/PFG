@@ -1,12 +1,11 @@
 package com.pfg.library;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
+import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 
-import javax.net.ssl.HttpsURLConnection;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,25 +24,20 @@ public class Collector {
 
     String storeDirective(JSONObject directive) {
         try {
-            String response = "";
             String body = directive.toJSONString();
-            URL url = new URL(this.endpoint);
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type", "application/json");
+            System.out.println(body);
+            var client = HttpClient.newHttpClient();
+            var request = HttpRequest.newBuilder()
+                .uri(URI.create(this.endpoint))
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .header("Content-Type", "application/json")
+                .build();
+            HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+            JSONParser jsonParser = new JSONParser();
+            JSONObject json = (JSONObject) jsonParser.parse(response.body());
+            Long id = (Long) json.get("id");
+            return Long.toString(id);
 
-            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-            dos.writeBytes(body);
-
-            BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = bf.readLine()) != null) {
-                response = response + line;
-            }
-            JSONParser parser = new JSONParser();
-            JSONObject json = (JSONObject) parser.parse(response);
-            return (String) json.get("id");
         } catch (Exception e) {
             System.err.println(e);
         }
