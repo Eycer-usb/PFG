@@ -6,7 +6,7 @@
         "user": "tpch",
         "password": "********",
         "optimization": "--index",
-        "queryKey": "22",
-        "queryPath": "src/test/resources/22.sql"
+        "queryKey": "21",
+        "queryPath": "src/test/resources/21.sql"
     }
 }
