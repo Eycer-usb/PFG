@@ -60,7 +60,8 @@ fi
 if [ ${client} = true ]; then
   sudo apt install -y openjdk-17-jdk \
     openjdk-17-jre \
-    bc
+    bc \
+    libcurl4-openssl-dev
 
   cd ../../library
   mvn clean install package
