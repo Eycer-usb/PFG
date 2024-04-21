@@ -57,13 +57,16 @@ public class Executor {
         directive.put("iteration", (String) this.jsonConfig.get("iteration"));
         directive.put("clientPid", clientPid);
         directive.put("serverPid", serverPid);
-        directive.put("startTime", startTimestamp);
-        directive.put("endTime", endTimestamp);
-        directive.put("executionTime", getDuration(startTimestamp, endTimestamp));
+        directive.put("startTime", Long.toString(startTimestamp.getTime()));
+        directive.put("endTime", Long.toString(endTimestamp.getTime()));
+        directive.put("executionTime", Long.toString(getDuration(startTimestamp, endTimestamp)));
 
         String registryId = this.collector.storeDirective( directive );
         this.clientObserver.reportMetrics(registryId);
         this.serverObserver.reportMetrics(registryId);
+
+        this.clientObserver.disconnect();
+        this.serverObserver.disconnect();
     }
 
     public static String getOwnPid() throws IOException {
