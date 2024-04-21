@@ -2,9 +2,11 @@
 
 using namespace std;
 
-Executor::Executor(map<string, string> config)
+Executor::Executor(map<string, string> config, Monitor* monitor)
 {
     printf(TITLE "Configuring Socket" ENDL);
+    this->config = config;
+    this->monitor = monitor;
     const int type = SOCK_STREAM; // TCP(reliable, connection-oriented)
     const int domain = AF_INET;   // For Connections in different host
     const int protocol = 0;       // Protocol value for Internet Protocol(IP), which is 0
@@ -77,10 +79,13 @@ void Executor::talk()
     while (this->clientConnection != -1)
     {
         char buffer[1024] {0};
-        int read = recv(this->clientConnection, buffer, sizeof(buffer), 0);
+        recv(this->clientConnection, buffer, sizeof(buffer), 0);
         printf(INFO "Received: " END "%s", buffer);
         const int code = buffer[0] - '0';
         long result;
+        buffer[0] = '0';
+        char* output;
+        result = strtol(buffer, &output, 10);
         switch (code)
         {
         case 9:
@@ -91,16 +96,13 @@ void Executor::talk()
             printf(SUCCESS "Sended" ENDL);
             break;
         case 1:
-            buffer[0] = '0';
-            char* output;
-            result = strtol(buffer, &output, 10);
             this->startMonitoring(result);
             break;
         case 2:
             this->stopMonitoring();
             break;
         case 3:
-            this->reportToCollector(buffer);
+            this->reportToCollector(result);
             break;
         default:
             printf(ERROR "Unknow message code" ENDL);
@@ -117,7 +119,7 @@ void Executor::sendMessage(char* message) {
 }
 
 void Executor::sendSuccess() {
-    this->sendMessage("0\n");
+    this->sendMessage((char*) "0\n");
     printf(SUCCESS "Received Notification sended" ENDL);
 
 }
@@ -131,7 +133,7 @@ void Executor::startMonitoring(long pid){
 
 void Executor::stopMonitoring(){
     printf(ACTION "Monitoring Stoped" ENDL);
-    this->metrics = this->monitor.stop();
+    this->metrics = this->monitor->stop();
     this->monitorThread->join();
     this->sendSuccess();
 }
@@ -143,14 +145,21 @@ void Executor::closeConnection() {
     this->clientConnection = -1;
 }
 
-void Executor::reportToCollector(char* buffer) {
+void Executor::reportToCollector(long directiveIdFk) {
     printf(ACTION "Reporting to Collector" ENDL);
     printf(ACTION "Reporting %li and %li" ENDL, this->metrics.first, this->metrics.second );
+    char body[1024];
+    sprintf(body, "{\
+    directiveIdFk: %li,\
+    energyConsumed: \"%li\",\
+    cpuUsage: \"%s\"\
+    }",
+    directiveIdFk, this->metrics.second, "N/A");
+    this->collector.storeMetrics(this->config["COLLECTOR_ENDPOINT"], body);
     this->sendSuccess();
 }
 
 
 void Executor::monitorThreadFunction(int pid){
-    this->monitor.init(250, 1000);
-    this->monitor.start(pid);
+    this->monitor->start(pid);
 }

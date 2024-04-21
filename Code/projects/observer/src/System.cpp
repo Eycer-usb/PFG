@@ -156,6 +156,7 @@ int System::getOsName()
         cout << "Operative System: " << osName << " No sopported yet" << endl; 
         return 0;
     }
+    return -1;
 }
 
 Cpu* System::getCpu()
@@ -208,6 +209,7 @@ Cpu* System::getCpu()
     {
         cerr << e.what() << '\n';
     }
+    return NULL;
 }
 
 // Get the percentage of cpu usage between two process loads

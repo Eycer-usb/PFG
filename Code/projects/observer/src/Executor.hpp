@@ -11,19 +11,23 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h> 
+#include <unistd.h>
 #include <thread>
 #include "Monitor.hpp"
 #include "Colors.hpp"
+#include "Collector.hpp"
 
 using namespace std;
 
 class Executor
 {
 private:
+    map<string, string> config;
     int serverSocket;
     int clientConnection;
     int port;
-    Monitor monitor;
+    Monitor* monitor;
+    Collector collector;
     unique_ptr<thread> monitorThread;
     pair<long, long> metrics;
     
@@ -33,12 +37,12 @@ private:
     void sendMessage( char* message );
     void startMonitoring( long pid );
     void stopMonitoring();
-    void reportToCollector( char* message );
+    void reportToCollector( long directiveIdFk );
     void sendSuccess();
     void monitorThreadFunction(int pid);
 
 public:
-    Executor( map<string, string> config );
+    Executor( map<string, string>, Monitor* monitor );
     ~Executor();
     void listen();
 };
