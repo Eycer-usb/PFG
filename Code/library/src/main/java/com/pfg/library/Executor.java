@@ -19,7 +19,6 @@ public class Executor {
         setCollector();
     }
 
-    @SuppressWarnings("unchecked")
     public void execute() {
         String clientPid = null;
         String serverPid = null;
@@ -35,72 +34,20 @@ public class Executor {
             System.exit(-1);
         }
 
-        Thread clientThread;
-        try {
-            clientThread = new Thread(
-                new RunnableMethodFromObject<Observer, String>(
-                        this.clientObserver,
-                        "startMonitoring",
-                        clientPid));
-            clientThread.start();
-            this.serverObserver.startMonitoring(serverPid);
-            clientThread.join();
-        } catch (Exception e) {
-            System.out.println("Error Starting Monitors");
-            e.printStackTrace();
-        }
+        this.startObservers(clientPid, serverPid);
         Timestamp startTimestamp = getCurrentTimestamp();
         System.out.println("Timestamp: " + startTimestamp);
         this.database.runQuery();
         Timestamp endTimestamp = getCurrentTimestamp();
         System.out.println("Timestamp: " + endTimestamp);
+        this.stopObservers();
 
-        try {
-            clientThread = new Thread(
-                    new RunnableMethodFromObject<Observer, Object>(
-                            this.clientObserver,
-                            "stopMonitoring",
-                            null));
-            System.out.println("Stopping Client Observer");
-            clientThread.start();
-            System.out.println("Stopping Server Observer");
-            this.serverObserver.stopMonitoring();
-            clientThread.join();
+        String registryId = this.storeDirective(clientPid, serverPid, startTimestamp, endTimestamp);
 
-        } catch (Exception e) {
-            System.out.println("Error Stopping Monitors");
-            e.printStackTrace();
-        }
+        this.reportMetrics(registryId);
+        
+        this.disconnectObservers();
 
-        JSONObject directive = new JSONObject();
-        directive.put("databaseKey", database.getDatabaseKey());
-        directive.put("optimizationKey", database.getOptimizationKey());
-        directive.put("queryKey", database.getQueryKey());
-        directive.put("iteration", (String) this.jsonConfig.get("iteration"));
-        directive.put("clientPid", clientPid);
-        directive.put("serverPid", serverPid);
-        directive.put("startTime", Long.toString(startTimestamp.getTime()));
-        directive.put("endTime", Long.toString(endTimestamp.getTime()));
-        directive.put("executionTime", Long.toString(getDuration(startTimestamp, endTimestamp)));
-
-        String registryId = this.collector.storeDirective(directive);
-
-        try {
-            clientThread = new Thread(
-                    new RunnableMethodFromObject<Observer, String>(
-                            this.clientObserver,
-                            "reportMetrics",
-                            registryId));
-            clientThread.start();
-            this.serverObserver.reportMetrics(registryId);
-            clientThread.join();
-        } catch (Exception e) {
-            System.out.println("Error Reporting in Monitors");
-            e.printStackTrace();
-        }
-
-        this.clientObserver.disconnect();
-        this.serverObserver.disconnect();
     }
 
     public static String getOwnPid() throws IOException {
@@ -124,6 +71,95 @@ public class Executor {
         JSONObject collectorConfig = (JSONObject) jsonConfig.get("collector");
         collector = new Collector(collectorConfig);
     }
+
+    protected void startObservers(String clientPid, String serverPid) {
+        Thread clientThread;
+        try {
+            clientThread = new Thread(
+                new RunnableMethodFromObject<Observer, String>(
+                        this.clientObserver,
+                        "startMonitoring",
+                        clientPid));
+            clientThread.start();
+            this.serverObserver.startMonitoring(serverPid);
+            clientThread.join();
+        } catch (Exception e) {
+            System.out.println("Error Starting Monitors");
+            e.printStackTrace();
+        }
+    }
+
+    protected void stopObservers() {
+        Thread clientThread;
+        try {
+            clientThread = new Thread(
+                    new RunnableMethodFromObject<Observer, Object>(
+                            this.clientObserver,
+                            "stopMonitoring",
+                            null));
+            System.out.println("Stopping Client Observer");
+            clientThread.start();
+            System.out.println("Stopping Server Observer");
+            this.serverObserver.stopMonitoring();
+            clientThread.join();
+
+        } catch (Exception e) {
+            System.out.println("Error Stopping Monitors");
+            e.printStackTrace();
+        }
+    }
+
+    protected void reportMetrics(String registryId) {
+        Thread clientThread;
+        try {
+            clientThread = new Thread(
+                    new RunnableMethodFromObject<Observer, String>(
+                            this.clientObserver,
+                            "reportMetrics",
+                            registryId));
+            clientThread.start();
+            this.serverObserver.reportMetrics(registryId);
+            clientThread.join();
+        } catch (Exception e) {
+            System.out.println("Error Reporting in Monitors");
+            e.printStackTrace();
+        }
+    }
+
+    protected void disconnectObservers(){
+        Thread clientThread;
+        try {
+            clientThread = new Thread(
+                    new RunnableMethodFromObject<Observer, Object>(
+                            this.clientObserver,
+                            "disconnect",
+                            null));
+            clientThread.start();
+            this.serverObserver.disconnect();
+            clientThread.join();
+        } catch (Exception e) {
+            System.out.println("Error Disconnecting Monitors");
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected String storeDirective(String clientPid, String serverPid, Timestamp startTimestamp, Timestamp endTimestamp){
+        JSONObject directive = new JSONObject();
+        directive.put("databaseKey", database.getDatabaseKey());
+        directive.put("optimizationKey", database.getOptimizationKey());
+        directive.put("queryKey", database.getQueryKey());
+        directive.put("iteration", (String) this.jsonConfig.get("iteration"));
+        directive.put("clientPid", clientPid);
+        directive.put("serverPid", serverPid);
+        directive.put("startTime", Long.toString(startTimestamp.getTime()));
+        directive.put("endTime", Long.toString(endTimestamp.getTime()));
+        directive.put("executionTime", Long.toString(getDuration(startTimestamp, endTimestamp)));
+
+        String registryId = this.collector.storeDirective(directive);
+        return registryId;
+    }
+
 
     public static Timestamp getCurrentTimestamp() {
         final Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
