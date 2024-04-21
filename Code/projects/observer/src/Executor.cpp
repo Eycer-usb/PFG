@@ -2,10 +2,11 @@
 
 using namespace std;
 
-Executor::Executor(map<string, string> config)
+Executor::Executor(map<string, string> config, Monitor* monitor)
 {
     printf(TITLE "Configuring Socket" ENDL);
     this->config = config;
+    this->monitor = monitor;
     const int type = SOCK_STREAM; // TCP(reliable, connection-oriented)
     const int domain = AF_INET;   // For Connections in different host
     const int protocol = 0;       // Protocol value for Internet Protocol(IP), which is 0
@@ -132,7 +133,7 @@ void Executor::startMonitoring(long pid){
 
 void Executor::stopMonitoring(){
     printf(ACTION "Monitoring Stoped" ENDL);
-    this->metrics = this->monitor.stop();
+    this->metrics = this->monitor->stop();
     this->monitorThread->join();
     this->sendSuccess();
 }
@@ -160,6 +161,5 @@ void Executor::reportToCollector(long directiveIdFk) {
 
 
 void Executor::monitorThreadFunction(int pid){
-    this->monitor.init(250, 1000);
-    this->monitor.start(pid);
+    this->monitor->start(pid);
 }

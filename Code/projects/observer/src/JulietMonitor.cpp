@@ -1,33 +1,29 @@
-#include "Monitor.hpp"
+#include "JulietMonitor.hpp"
 
 using namespace std;
 
 // Simple Rate is the number of samples per second
 // Sampling Time is the time between samples in seconds
-Monitor::Monitor()
+JulietMonitor::JulietMonitor(double samplingRate, double samplingTime)
 {
     this->monitoring = true;
     this->sys = new System();
     this->cpu = sys->getCpu();
     cpu->initializate();
-}
-
-Monitor::~Monitor()
-{
-    delete this->sys;
-}
-
-void Monitor::init(double samplingRate, double samplingTime)
-{
     this->samplingRate = samplingRate;
     this->samplingTime = samplingTime;
 }
 
-void Monitor::start(int pid)
+JulietMonitor::~JulietMonitor()
+{
+    delete this->sys;
+}
+
+void JulietMonitor::start(int pid)
 {
     this->monitoring = true;
     this->pid = pid;
-    cout << "Monitor started for process id " << pid << endl;
+    cout << "JulietMonitor started for process id " << pid << endl;
 
     while (this->monitoring)
     {
@@ -43,11 +39,11 @@ void Monitor::start(int pid)
     }
 }
 
-pair<long, long> Monitor::stop()
+pair<long, long> JulietMonitor::stop()
 {
     pair<long, long> energyMeasured;
     this->monitoring = false;
-    cout << "Monitor stopped" << endl;
+    cout << "JulietMonitor stopped" << endl;
     if (this->energy.size() == 0)
     {
         cout << "No energy consumed" << endl;
@@ -63,7 +59,7 @@ pair<long, long> Monitor::stop()
     return energyMeasured;
 }
 
-double Monitor::getEnergyConsumed(map<string, double> iteration)
+double JulietMonitor::getEnergyConsumed(map<string, double> iteration)
 {
     double energy = 0;
     double cpuPercentageUsedByPid = iteration["process_" + to_string(pid) + "_cpu_percentage"];
@@ -71,7 +67,7 @@ double Monitor::getEnergyConsumed(map<string, double> iteration)
     return energy;
 }
 
-void Monitor::updateEnergy(vector<map<string, double>> sample)
+void JulietMonitor::updateEnergy(vector<map<string, double>> sample)
 {
     // Updating energy Consumed by process
     double energy = this->energy.size() == 0 ? 0 : this->energy[this->energy.size() - 1];
@@ -94,7 +90,7 @@ void Monitor::updateEnergy(vector<map<string, double>> sample)
     // cout << "Energy consumed by process: " << this->energy[this->energy.size() - 1] << " J" << endl;
 }
 
-vector<map<string, double>> Monitor::takeSample()
+vector<map<string, double>> JulietMonitor::takeSample()
 {
     vector<double> energySamples;             // energy samples
     vector<vector<double>> systemLoadSamples; // system load samples

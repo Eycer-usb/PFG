@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h> 
+#include <unistd.h>
 #include <thread>
 #include "Monitor.hpp"
 #include "Colors.hpp"
@@ -25,7 +26,7 @@ private:
     int serverSocket;
     int clientConnection;
     int port;
-    Monitor monitor;
+    Monitor* monitor;
     Collector collector;
     unique_ptr<thread> monitorThread;
     pair<long, long> metrics;
@@ -41,7 +42,7 @@ private:
     void monitorThreadFunction(int pid);
 
 public:
-    Executor( map<string, string> config );
+    Executor( map<string, string>, Monitor* monitor );
     ~Executor();
     void listen();
 };

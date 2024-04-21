@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include "src/Executor.hpp"
+#include "src/JulietMonitor.hpp"
 #include "src/Colors.hpp"
 
 using namespace std;
@@ -54,8 +55,11 @@ int main(int argc, char const *argv[])
     // Get Arguments
     getConfigFromEnvironment();
 
+    // Choosing Juliet as Monitor
+    JulietMonitor julietMonitor = JulietMonitor(250, 1000);
+
     // Starting sockets connections
-    Executor executor(config);
+    Executor executor(config, &julietMonitor);
     executor.listen();
 
     return 0;
