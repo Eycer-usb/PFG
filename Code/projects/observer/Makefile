@@ -2,7 +2,10 @@
 CXX := g++
 
 # Compiler flags
-CXXFLAGS := -Wall -Wextra -pedantic -std=c++11 -pthread
+CXXFLAGS := -Wall -Wextra -pedantic -std=c++11
+
+# Post flags
+CXXPOSFLAGS :=  -pthread -lcurl
 
 # Source files directory
 SRC_DIR := src
@@ -33,7 +36,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(SRC_DIR)/%.hpp
 
 # Rule to link object files and create the executable
 $(EXECUTABLE): $(OBJ_FILES) main.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(CXXPOSFLAGS)
 
 # Clean target
 clean:

@@ -15,7 +15,6 @@ Monitor::Monitor()
 Monitor::~Monitor()
 {
     delete this->sys;
-    delete this->cpu;
 }
 
 void Monitor::init(double samplingRate, double samplingTime)
