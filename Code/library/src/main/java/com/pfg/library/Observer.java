@@ -68,19 +68,19 @@ public class Observer {
         return false;
     }
 
-    void startMonitoring(String processPid){
+    public void startMonitoring(String processPid){
         System.out.println("Sending Start Monitor Order for Pid: " + processPid);
         String response = this.send("1" + processPid);
         this.checkCorrectResponse(response);
     }
 
-    void stopMonitoring(){
+    public void stopMonitoring(){
         System.out.println("Sending Stop Monitor Order");
         String response = this.send("2");
         this.checkCorrectResponse(response);
     }
 
-    void reportMetrics(String registryId) {
+    public void reportMetrics(String registryId) {
         System.out.println("Sending Report Metrics Order");
         String response = this.send("3" + registryId);
         this.checkCorrectResponse(response);

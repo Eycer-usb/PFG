@@ -11,13 +11,13 @@ public class Executor {
     Collector collector;
     Database database = null;
 
-    public Executor(Database database, JSONObject config){
+    public Executor(Database database, JSONObject config) {
         this.database = database;
         this.jsonConfig = (JSONObject) config.get("executor");
         setClientObserver();
         setServerObserver();
         setCollector();
-    } 
+    }
 
     @SuppressWarnings("unchecked")
     public void execute() {
@@ -35,20 +35,42 @@ public class Executor {
             System.exit(-1);
         }
 
-
-        this.clientObserver.startMonitoring(clientPid);
-        this.serverObserver.startMonitoring(serverPid);
-
+        Thread clientThread;
+        try {
+            clientThread = new Thread(
+                new RunnableMethodFromObject<Observer, String>(
+                        this.clientObserver,
+                        "startMonitoring",
+                        clientPid));
+            clientThread.start();
+            this.serverObserver.startMonitoring(serverPid);
+            clientThread.join();
+        } catch (Exception e) {
+            System.out.println("Error Starting Monitors");
+            e.printStackTrace();
+        }
         Timestamp startTimestamp = getCurrentTimestamp();
         System.out.println("Timestamp: " + startTimestamp);
         this.database.runQuery();
         Timestamp endTimestamp = getCurrentTimestamp();
         System.out.println("Timestamp: " + endTimestamp);
 
-        System.out.println("Stopping Client Observer");
-        this.clientObserver.stopMonitoring();
-        System.out.println("Stopping Server Observer");
-        this.serverObserver.stopMonitoring();
+        try {
+            clientThread = new Thread(
+                    new RunnableMethodFromObject<Observer, Object>(
+                            this.clientObserver,
+                            "stopMonitoring",
+                            null));
+            System.out.println("Stopping Client Observer");
+            clientThread.start();
+            System.out.println("Stopping Server Observer");
+            this.serverObserver.stopMonitoring();
+            clientThread.join();
+
+        } catch (Exception e) {
+            System.out.println("Error Stopping Monitors");
+            e.printStackTrace();
+        }
 
         JSONObject directive = new JSONObject();
         directive.put("databaseKey", database.getDatabaseKey());
@@ -61,9 +83,21 @@ public class Executor {
         directive.put("endTime", Long.toString(endTimestamp.getTime()));
         directive.put("executionTime", Long.toString(getDuration(startTimestamp, endTimestamp)));
 
-        String registryId = this.collector.storeDirective( directive );
-        this.clientObserver.reportMetrics(registryId);
-        this.serverObserver.reportMetrics(registryId);
+        String registryId = this.collector.storeDirective(directive);
+
+        try {
+            clientThread = new Thread(
+                    new RunnableMethodFromObject<Observer, String>(
+                            this.clientObserver,
+                            "reportMetrics",
+                            registryId));
+            clientThread.start();
+            this.serverObserver.reportMetrics(registryId);
+            clientThread.join();
+        } catch (Exception e) {
+            System.out.println("Error Reporting in Monitors");
+            e.printStackTrace();
+        }
 
         this.clientObserver.disconnect();
         this.serverObserver.disconnect();
