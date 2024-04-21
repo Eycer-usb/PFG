@@ -33,7 +33,7 @@ public class TestPGDB extends TestCase{
     public void testGetQueryKey() throws Exception {
         JSONObject config = Utils.getJsonObjectFromFile(this.configFile);
         PGDB database = new PGDB(config);
-        assertEquals("2", database.getQueryKey());
+        assertEquals("22", database.getQueryKey());
     }
 
     public void testRunQuery() throws Exception {

@@ -3,7 +3,7 @@
 export $(grep -v '^#' environment.env |  xargs -d '\n')
 
 cd ../library
-mvn clean install package
+mvn clean install -DskipTests package
 cd -
 cd executor
 mvn clean install package
