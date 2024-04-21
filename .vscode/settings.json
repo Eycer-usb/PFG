@@ -8,6 +8,9 @@
         "ranges": "cpp",
         "utility": "cpp",
         "vector": "cpp",
-        "*.tcc": "cpp"
-    }
+        "*.tcc": "cpp",
+        "thread": "cpp",
+        "functional": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

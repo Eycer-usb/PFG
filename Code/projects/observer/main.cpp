@@ -55,7 +55,7 @@ int main(int argc, char const *argv[])
     getConfigFromEnvironment();
 
     // Starting sockets connections
-    Executor executor = Executor(config);
+    Executor executor(config);
     executor.listen();
 
     return 0;

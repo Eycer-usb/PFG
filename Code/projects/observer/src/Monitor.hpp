@@ -13,7 +13,7 @@ class Monitor
 {
 private:
     bool monitoring;
-    string pname;
+    int pid;
     double samplingRate;
     double samplingTime;
     map<int, double> cpuUseByPid;
@@ -27,8 +27,8 @@ private:
 public:
     Monitor();
     ~Monitor();
-    void start(string pname);
-    void stop();
+    void start(int pid);
+    pair<long, long> stop();
     void init(double samplingRate, double samplingTime);
     void updateEnergy(vector<map<string,double>> sample);
     vector<map<string,double>>  takeSample();

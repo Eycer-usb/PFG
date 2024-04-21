@@ -35,6 +35,8 @@ Executor::Executor(map<string, string> config)
 }
 Executor::~Executor()
 {
+    this->stopMonitoring();
+    this->closeConnection();
     close(this->serverSocket);
 }
 void Executor::listen()
@@ -78,6 +80,7 @@ void Executor::talk()
         int read = recv(this->clientConnection, buffer, sizeof(buffer), 0);
         printf(INFO "Received: " END "%s", buffer);
         const int code = buffer[0] - '0';
+        long result;
         switch (code)
         {
         case 9:
@@ -88,7 +91,10 @@ void Executor::talk()
             printf(SUCCESS "Sended" ENDL);
             break;
         case 1:
-            this->startMonitoring(buffer);
+            buffer[0] = '0';
+            char* output;
+            result = strtol(buffer, &output, 10);
+            this->startMonitoring(result);
             break;
         case 2:
             this->stopMonitoring();
@@ -116,16 +122,18 @@ void Executor::sendSuccess() {
 
 }
 
-void Executor::startMonitoring(char* message){
+void Executor::startMonitoring(long pid){
     printf(ACTION "Starting Monitoring" ENDL);
     // Starting
+    monitorThread.reset(new thread(&Executor::monitorThreadFunction, this, pid));
     this->sendSuccess();
 }
 
 void Executor::stopMonitoring(){
     printf(ACTION "Monitoring Stoped" ENDL);
+    this->metrics = this->monitor.stop();
+    this->monitorThread->join();
     this->sendSuccess();
-    // Stopping
 }
 
 void Executor::closeConnection() {
@@ -137,6 +145,12 @@ void Executor::closeConnection() {
 
 void Executor::reportToCollector(char* buffer) {
     printf(ACTION "Reporting to Collector" ENDL);
+    printf(ACTION "Reporting %li and %li" ENDL, this->metrics.first, this->metrics.second );
     this->sendSuccess();
-    // Reporting
+}
+
+
+void Executor::monitorThreadFunction(int pid){
+    this->monitor.init(250, 1000);
+    this->monitor.start(pid);
 }

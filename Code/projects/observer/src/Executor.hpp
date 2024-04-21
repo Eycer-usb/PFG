@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h> 
+#include <thread>
 #include "Monitor.hpp"
 #include "Colors.hpp"
 
@@ -22,14 +23,19 @@ private:
     int serverSocket;
     int clientConnection;
     int port;
+    Monitor monitor;
+    unique_ptr<thread> monitorThread;
+    pair<long, long> metrics;
+    
     void talk();
     void acceptConnection();
     void closeConnection();
     void sendMessage( char* message );
-    void startMonitoring( char* message );
+    void startMonitoring( long pid );
     void stopMonitoring();
     void reportToCollector( char* message );
     void sendSuccess();
+    void monitorThreadFunction(int pid);
 
 public:
     Executor( map<string, string> config );

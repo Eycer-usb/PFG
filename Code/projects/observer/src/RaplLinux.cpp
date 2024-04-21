@@ -54,9 +54,9 @@ void RaplLinux::initializate()
 
 }
 
-double RaplLinux::getCurrentPower()
+double RaplLinux::getCurrentEnergy()
 {
-    double power = 0;
+    double energy = 0;
     for (auto raplFile : this->raplFilesToRead)
     {
         fstream file;
@@ -66,20 +66,20 @@ double RaplLinux::getCurrentPower()
             string line;
             getline(file, line);
             file.close();
-            power += stod(line);
+            energy += stod(line);
         }
         else
         {
-            cout << "Error opening file getting initial power: " << raplFile << endl;
+            cout << "Error opening file getting initial energy: " << raplFile << endl;
             exit(EXIT_FAILURE);
         }
     }
-    return power / 1000000; // Convert from uJ to J
+    return energy / 1000000; // Convert from uJ to J
 }
 
-double RaplLinux::getInitialPower()
+double RaplLinux::getInitialEnergy()
 {
-    return this->getCurrentPower();
+    return this->getCurrentEnergy();
 }
 
 array<string, 3> RaplLinux::getPowercapPath()

@@ -2,7 +2,7 @@
 CXX := g++
 
 # Compiler flags
-CXXFLAGS := -Wall -Wextra -pedantic -std=c++11
+CXXFLAGS := -Wall -Wextra -pedantic -std=c++11 -pthread
 
 # Source files directory
 SRC_DIR := src
