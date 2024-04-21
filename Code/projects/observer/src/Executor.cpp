@@ -149,7 +149,7 @@ void Executor::reportToCollector(long directiveIdFk) {
     printf(ACTION "Reporting %li and %li" ENDL, this->metrics.first, this->metrics.second );
     char body[1024];
     sprintf(body, "{\
-    directiveIdFk: \"%li\",\
+    directiveIdFk: %li,\
     energyConsumed: \"%li\",\
     cpuUsage: \"%s\"\
     }",
