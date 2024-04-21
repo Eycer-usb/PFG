@@ -6,8 +6,8 @@
         "user": "tpch",
         "password": "********",
         "optimization": "--index",
-        "queryKey": "2",
-        "queryPath": "queries/2.sql"
+        "queryKey": "21",
+        "queryPath": "queries/21.sql"
     },
     "executor": {
         "iteration": "14",
