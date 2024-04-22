@@ -29,7 +29,7 @@ public:
     JulietMonitor(double samplingRate, double samplingTime);
     ~JulietMonitor();
     void start(int pid);
-    pair<long, long> stop();
+    pair<double, double> stop();
     void updateEnergy(vector<map<string,double>> sample);
     vector<map<string,double>>  takeSample();
     double getEnergyConsumed(map<string,double> iteration);

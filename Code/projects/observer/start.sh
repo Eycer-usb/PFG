@@ -12,7 +12,7 @@ chmod +x julietX
 gnome-terminal -- bash -c "sudo -E ./julietX"
 
 export SOCKET_PORT=43319
-export COLLECTOR_ENDPOINT="192.168.2.102:43317/api/v1/server-metrics/add"
+export COLLECTOR_ENDPOINT="http://192.168.2.102:43317/api/v1/server-metrics/add"
 sudo -E ./julietX
 
 done

@@ -147,15 +147,16 @@ void Executor::closeConnection() {
 
 void Executor::reportToCollector(long directiveIdFk) {
     printf(ACTION "Reporting to Collector" ENDL);
-    printf(ACTION "Reporting %li and %li" ENDL, this->metrics.first, this->metrics.second );
+    printf(ACTION "Reporting %f and %f" ENDL, this->metrics.first, this->metrics.second );
     char body[1024];
     sprintf(body, "{\
-    directiveIdFk: %li,\
-    energyConsumed: \"%li\",\
-    cpuUsage: \"%s\"\
+    \"directiveIdFk\": %li,\
+    \"energyConsumed\": \"%.3f\",\
+    \"cpuUsage\": \"%s\"\
     }",
     directiveIdFk, this->metrics.second, "N/A");
     this->collector.storeMetrics(this->config["COLLECTOR_ENDPOINT"], body);
+    cout << endl;
     this->sendSuccess();
 }
 

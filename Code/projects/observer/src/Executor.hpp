@@ -29,7 +29,7 @@ private:
     Monitor* monitor;
     Collector collector;
     unique_ptr<thread> monitorThread;
-    pair<long, long> metrics;
+    pair<double, double> metrics;
     
     void talk();
     void acceptConnection();

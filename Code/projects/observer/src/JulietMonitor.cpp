@@ -39,9 +39,9 @@ void JulietMonitor::start(int pid)
     }
 }
 
-pair<long, long> JulietMonitor::stop()
+pair<double, double> JulietMonitor::stop()
 {
-    pair<long, long> energyMeasured;
+    pair<double, double> energyMeasured;
     this->monitoring = false;
     cout << "JulietMonitor stopped" << endl;
     if (this->energy.size() == 0)
