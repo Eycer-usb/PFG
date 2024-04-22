@@ -43,7 +43,7 @@ void getConfigFromEnvironment()
 // Main function of the program
 int main(int argc, char const *argv[])
 {
-    printf(TITLE "JuletX Monitor Tool Started!" ENDL);
+    printf(TITLE "JulietX Monitor Tool Started!" ENDL);
     // Error handling
     if (argc != 1)
     {
