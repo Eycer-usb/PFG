@@ -3,6 +3,7 @@
 maven=false
 postgres=false
 client=false
+mongo=false
 
 
 # Usage Instructions
@@ -20,10 +21,11 @@ if [[ $# -eq 0 ]]; then
 fi
 
 # Options Processor
-while getopts 'cpmh' flag; do
+while getopts 'cpmgh' flag; do
   case "${flag}" in
   c) client=true ;;
   p) postgres=true ;;
+  g) mongo=true ;;
   m) maven=true ;;
   h)
     print_usage
@@ -65,6 +67,8 @@ if [ ${client} = true ]; then
 
   cd ../../library
   mvn clean install package
+
+  pip3 install pymongo # For Mongo benchmark generator
 fi
 
 
@@ -76,4 +80,17 @@ if [ ${postgres} = true ]; then
     postgresql-server-dev-14 \
     postgresql-contrib \
     postgresql-server-dev-all
+fi
+
+# Mongodb Installation
+
+if [ ${mongo} = true ]; then 
+  sudo apt install -y gnupg curl
+  curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \
+   sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+   --dearmor
+  echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+  sudo apt-get update
+  sudo apt-get install -y mongodb-org
+  sudo systemctl start mongod
 fi

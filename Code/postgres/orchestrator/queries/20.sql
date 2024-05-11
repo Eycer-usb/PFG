@@ -1,4 +1,5 @@
 -- using 1712547367 as a seed to the RNG
+-- using 1715402239 as a seed to the RNG
 
 
 select
@@ -12,36 +13,30 @@ where
 		select
 			ps_suppkey
 		from
-			partsupp,
-			(
-				select
-					l_partkey agg_partkey,
-					l_suppkey agg_suppkey,
-					0.5 * sum(l_quantity) AS agg_quantity
-				from
-					lineitem
-				where
-					l_shipdate >= date '1994-01-01'
-					and l_shipdate < date '1994-01-01' + interval '1' year
-				group by
-					l_partkey,
-					l_suppkey
-			) agg_lineitem
+			partsupp
 		where
-			agg_partkey = ps_partkey
-			and agg_suppkey = ps_suppkey
-			and ps_partkey in (
+			ps_partkey in (
 				select
 					p_partkey
 				from
 					part
 				where
-					p_name like 'frosted%'
+					p_name like 'gainsboro%'
 			)
-			and ps_availqty > agg_quantity
+			and ps_availqty > (
+				select
+					0.5 * sum(l_quantity)
+				from
+					lineitem
+				where
+					l_partkey = ps_partkey
+					and l_suppkey = ps_suppkey
+					and l_shipdate >= date '1995-01-01'
+					and l_shipdate < date '1995-01-01' + interval '1' year
+			)
 	)
 	and s_nationkey = n_nationkey
-	and n_name = 'UNITED KINGDOM'
+	and n_name = 'VIETNAM'
 order by
-	s_name
-LIMIT 1;
+	s_name;
+where rownum <= -1;

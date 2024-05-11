@@ -64,6 +64,16 @@ main() {
         python3 tpch_pgsql.py load '-z'
     fi
 
+    echo ""
+    echo "Copy Queries"
+    echo "--------------------------------"
+    queries_folder="../queries"
+    if [ ! -d "$queries_folder" ]; then
+        mkdir -p $queries_folder
+    fi
+    cp -r query_root/perf_query_gen/* $queries_folder
+    echo "Copied"
+
     ################################################################################
     # OPTIMIZATIONS
     ################################################################################
