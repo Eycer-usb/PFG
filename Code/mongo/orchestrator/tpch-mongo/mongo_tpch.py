@@ -2,6 +2,7 @@ from pymongo import MongoClient
 import csv
 import json
 import threading
+from datetime import datetime
 
 """
 Mongo TPCH class to manage every aspect of TPCH benchmark generation
@@ -16,13 +17,13 @@ class Mongo_TPCH:
         self.db_name = db_name
         self.client = self.connect()
         self.collections = [
-            'REGION',
-            'LINEITEM', 'PARTSUPP', 'ORDERS',
-            'CUSTOMER', 'SUPPLIER', 'NATION', 'PART'
+            'region',
+            'lineitem', 'partsupp', 'orders',
+            'customer', 'supplier', 'nation', 'part'
             ]
-        self.headers = {}
+        self.schemas = {}
         with open("collections_schemas.json") as f:
-            self.headers = json.load(f)
+            self.schemas = json.load(f)
         self.client.drop_database(self.db_name)
         self.db = self.client[self.db_name]
         self.threads_number = threads_number
@@ -39,23 +40,25 @@ class Mongo_TPCH:
             print("Error connecting to mongo service")
         return connection
     
-    def get_header(self, collection_name):       
-        return self.headers[collection_name]
+    def get_schema(self, collection_name):       
+        return self.schemas[collection_name]
 
 
     def set_collection(self, collection_name) -> dict:
         try:
             print("Setting Collection " + collection_name)
-            header = self.get_header(collection_name)
+            schema = self.get_schema(collection_name)
             
-            with open( "tpch-dbgen/" + collection_name.lower() + ".tbl") as f:
+            with open( "tpch-dbgen/" + collection_name + ".tbl") as f:
                 csvreader = csv.reader(f, delimiter="|")
                 chunk = []
                 threads = []
                 for row in csvreader:
                     registry = {}
-                    for i in range(len(header)):
-                        registry[header[i]] = row[i]
+                    for i in range(len(schema)):
+                        name = schema[i]["name"]
+                        value_type = schema[i]["type"]
+                        registry[name] = self.get_value_with_type(row[i], value_type)
                     chunk.append(registry)
 
                     if len(chunk) % self.chunk_size == 0:
@@ -80,8 +83,8 @@ class Mongo_TPCH:
                     thread.start()
                     threads.append(thread)
 
-                print("Waiting Threads")
                 for thread in threads:
+                    print("Waiting Threads")
                     thread.join()
 
         except :
@@ -96,4 +99,16 @@ class Mongo_TPCH:
 
     def insert(self, collection_name, chunk):
         self.db[collection_name].insert_many(chunk)
-        
+
+    def get_value_with_type(self, value, value_type):
+        if( value_type == "int" ):
+            return int(value)
+        elif( value_type == "string" ):
+            return str(value)
+        elif( value_type == "float" ):
+            return float(value)
+        elif( value_type == "date" ):
+            return datetime.strptime(value, '%Y-%m-%d')
+        else:
+            print("Unknown type")
+            return value
