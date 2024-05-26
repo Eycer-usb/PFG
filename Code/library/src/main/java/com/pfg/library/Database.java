@@ -10,5 +10,8 @@ public interface Database {
     public String getQueryKey();
     public void runQuery();
     public void executeFile(String filepath) throws SQLException, IOException;
+    public void connect();
+    public void restartService();
+    public void dropDatabase();
     public void close();
 }

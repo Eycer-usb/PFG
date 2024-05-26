@@ -33,8 +33,10 @@ public class Analyst extends Communicable {
 
     @Override
     protected void manageMessage(String message){
-        if (this.orchestrator.isValidOption(message) && this.orchestrator.applyOption(message)) {
+        if (this.orchestrator.isValidOption(message)) {
             send("0");
+            this.orchestrator.selectOption(message);
+            send(String.valueOf(this.orchestrator.run()));
         }
         else {
             System.out.println("Error applying option " + message);

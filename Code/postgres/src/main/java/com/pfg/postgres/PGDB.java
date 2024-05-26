@@ -16,7 +16,7 @@ import com.pfg.library.Database;
  *
  * @constructor Creates a new PostgreSQL database client.
  */
-public class PGDB implements Database{
+public class PGDB implements Database {
 
     private Connection conn;
     private JSONObject databaseConfig;
@@ -29,22 +29,8 @@ public class PGDB implements Database{
      * @param password The password to use for authentication.
      * @param database The name of the database to connect to.
      */
-    public PGDB(JSONObject config)
-            throws SQLException, IOException {
-        databaseConfig = (JSONObject) config.get("database");
-        String host = (String) databaseConfig.get("host");
-        String port = (String) databaseConfig.get("port");
-        String databaseName = (String) databaseConfig.get("name");
-        String user = (String) databaseConfig.get("user");
-        String password = (String) databaseConfig.get("password");
-        String url = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
-        try {
-            Class.forName("org.postgresql.Driver");
-            conn = DriverManager.getConnection(url, user, password);
-        } catch (Exception e) {
-            throw new SQLException("Error in connection");
-        }
-        System.out.println("Database Connection Success");
+    public PGDB(JSONObject config) {
+
     }
 
     /**
@@ -95,7 +81,7 @@ public class PGDB implements Database{
         Path path = new File(filename).toPath();
         String file = Files.readAllLines(path).stream().reduce("", (a, b) -> a + "\n" + b);
         execute(file);
-    }   
+    }
 
     public void close() {
         try {
@@ -115,18 +101,19 @@ public class PGDB implements Database{
         return "";
     }
 
-    public String getDatabaseKey(){
+    public String getDatabaseKey() {
         return "postgres";
     }
-    public String getOptimizationKey(){
+
+    public String getOptimizationKey() {
         return (String) this.databaseConfig.get("optimization");
     };
 
-    public String getQueryKey(){
+    public String getQueryKey() {
         return (String) this.databaseConfig.get("queryKey");
     };
-    
-    public void runQuery(){
+
+    public void runQuery() {
         System.out.println("Running Query");
         String queryPath = (String) this.databaseConfig.get("queryPath");
         try {
@@ -137,5 +124,72 @@ public class PGDB implements Database{
         }
         System.out.println("Done");
     };
+
+    public void connect() throws SQLException, IOException {
+        databaseConfig = (JSONObject) config.get("database");
+        String host = (String) databaseConfig.get("host");
+        String port = (String) databaseConfig.get("port");
+        String databaseName = (String) databaseConfig.get("name");
+        String user = (String) databaseConfig.get("user");
+        String password = (String) databaseConfig.get("password");
+        String url = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
+        try {
+            Class.forName("org.postgresql.Driver");
+            conn = DriverManager.getConnection(url, user, password);
+        } catch (Exception e) {
+            throw new SQLException("Error in connection");
+        }
+        System.out.println("Database Connection Success");
+    }
+
+    public void restartService() { // Connect via ssh and restart service
+
+    }
+
+    private void dropDatabase() {
+        String host = (String) databaseConfig.get("host");
+        String port = (String) databaseConfig.get("port");
+        String user = (String) databaseConfig.get("user");
+        String password = (String) databaseConfig.get("password");
+        String databaseName = (String) databaseConfig.get("name");
+        Connection c = DriverManager
+                .getConnection("jdbc:postgresql://" + host + ":" + port, user, password);
+        Statement statement = c.createStatement();
+        statement.executeUpdate("DROP DATABASE " + databaseName);
+    }
+
+    private void createDatabase() {
+    }
+
+
+    // Available Setups
+    public void setBase(){
+        close();
+        dropDatabase();
+        createDatabase();
+        connect();
+        executeFile("src/main/resources/optimization/reset.sql");
+    }
+    public void setIndex(){
+        close();
+        dropDatabase();
+        createDatabase();
+        connect();
+        executeFile("src/main/resources/optimization/index.sql");
+    }
+    public void setCompression(){
+        close();
+        dropDatabase();
+        createDatabase();
+        connect();
+        executeFile("src/main/resources/optimization/reset.sql");
+    }
+    public void setIndexCompression(){
+        close();
+        dropDatabase();
+        createDatabase();
+        connect();
+        executeFile("src/main/resources/optimization/index.sql");
+    }
 
 }
