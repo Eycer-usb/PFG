@@ -11,18 +11,18 @@ def make():
         print("Error compiling JulietX Observer")
         exit(-1)
 
-def start(config):
+def start(config, console_command):
     print("Starting JulietX Observer")
     os.environ["COLLECTOR_ENDPOINT"]=config["collector_endpoint"]
     os.environ["SOCKET_PORT"]=config["observer_port"]
 
-    make_process = subprocess.Popen(["sudo", "-E", "./julietX"], 
+    make_process = subprocess.Popen([console_command, "--", "sudo", "-E", "./julietX"], 
                                   cwd=observer_dir)
     if not (make_process.poll() is None):
         print("Error starting Observer")
         exit(-1)
     return make_process
 
-def start_observer(config):
+def start_observer(config, console_command):
     make()
-    return start(config)
+    return start(config, console_command)

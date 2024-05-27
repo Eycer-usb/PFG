@@ -68,6 +68,7 @@ if __name__ == '__main__':
         pass
 
     # Starting observer
-    observer_process = lib.start_observer(observer_config)
+    observer_process = lib.start_observer(observer_config,
+                                          console_command=config["consoleCommand"])
     observer_process.wait()
     client_process.wait()

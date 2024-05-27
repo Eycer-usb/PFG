@@ -1,4 +1,5 @@
 {
+    "consoleCommand": "gnome-terminal",
     "orchestrator": {
         "address": "192.168.2.102",
         "port": "43316"

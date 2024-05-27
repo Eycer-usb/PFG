@@ -86,7 +86,7 @@ def start(config):
     orchestrator_config = "orchestrator_config.json"
     port = config["orchestrator"]["port"]
     if (create_orchestrator_config_file(config, orchestrator_config)):
-        proc = subprocess.Popen(["java", "-jar", 
+        proc = subprocess.Popen([config["consoleCommand"], "--", "java", "-jar", 
                                postgres_orchestrator_jar, orchestrator_config, port ],
                             cwd="./")
         return proc
