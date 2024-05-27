@@ -2,6 +2,7 @@ import requests
 import zipfile
 import os
 import subprocess
+import json
 
 directory = "./postgres/client/tpch-pgsql"
 folder_name = "tpch-dbgen"
@@ -10,6 +11,7 @@ library = "./library"
 postgres_orchestrator_dir = "./postgres/client"
 postgres_orchestrator_jar = "./postgres/client/target/" + \
     "postgres-orchestrator-1.0-SNAPSHOT-jar-with-dependencies.jar"
+
 
 def compile_dbgen():
     print("Compiling DB-gen...")
@@ -64,10 +66,30 @@ def prepare_resources():
     prepare_library()
     prepare_postgres_orchestrator()
 
-def start():
-    proc = subprocess.run(["java", "-jar", postgres_orchestrator_jar],
-                          cwd="./"
-                          )
+
+def create_orchestrator_config_file(general_config, target_file):
+    config = {
+        "database": general_config["database"],
+        "executor": {
+            "clientObserver": general_config["clientObserver"],
+            "serverObserver": general_config["serverObserver"],
+            "collector": {
+                "endpoint": general_config["collector"]["directive"]
+            }
+        }
+    }
+    with open(target_file, 'w') as f:
+        json.dump(config, f)
+        return True        
+
+def start(config):
+    orchestrator_config = "orchestrator_config.json"
+    port = config["orchestrator"]["port"]
+    if (create_orchestrator_config_file(config, orchestrator_config)):
+        proc = subprocess.Popen(["java", "-jar", 
+                               postgres_orchestrator_jar, orchestrator_config, port ],
+                            cwd="./")
+        return proc
 
 
 

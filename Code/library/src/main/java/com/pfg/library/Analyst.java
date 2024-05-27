@@ -17,6 +17,7 @@ public class Analyst extends Communicable {
 
     public void start(int port) {
         try {
+            System.out.println("Waiting analyst connection request");
             listen(port);
             this.sendOptions();
             this.talk();

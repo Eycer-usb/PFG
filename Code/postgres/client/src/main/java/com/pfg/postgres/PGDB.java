@@ -48,7 +48,7 @@ public class PGDB implements Database {
         password = (String) databaseConfig.get("password");
         databaseName = (String) databaseConfig.get("name");
         rootPassword = (String) databaseConfig.get("rootPassword");
-        sshPort = (int) databaseConfig.get("sshPort");
+        sshPort = Integer.parseInt((String) databaseConfig.get("sshPort"));
         root = "root";
     }
 

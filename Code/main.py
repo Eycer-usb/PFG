@@ -5,21 +5,22 @@ import projects.observer.observer as lib
 import json
 
 def print_help():
-    print("Required at least one argument")
-    print("client  --- Run as client")
-    print("server  --- Run as server")
+    print("Required at least three arguments")
+    print("client or server  --- Run as client or server")
+    print("postgres or mongo  --- Run postgres or mongo")
+    print("config.json  --- File with configuration")
 
 
-def client_postgres():
+def client_postgres(config):
     try:
         postgres_client.download_resources()
         postgres_client.prepare_resources()
-        postgres_client.start()
+        return postgres_client.start(config)
     except:
         print("Error Starting Postgres Client")
 
 
-def server_postgres():
+def server_postgres(config):
     pass
 
 
@@ -31,6 +32,7 @@ def get_config(filepath):
         
 
 if __name__ == '__main__':
+    # Input Validation
     if(len(sys.argv) <= 3):
         print_help()
         exit(-1)
@@ -41,16 +43,31 @@ if __name__ == '__main__':
         print_help()
         exit(-1)
 
-    config = get_config(sys.argv[3])
+    
+    config = get_config(sys.argv[3]) # Retrieval configuration from file
+    
+    # Setting up observer configuration
     observer_config = {
         "observer_port": "",
         "collector_endpoint": config["collector"]["metrics"]
     }
-    if(sys.argv[1] == "client"):
+
+    # Client Process
+    client_process = None
+
+    # Preparing and running orchestrators in each case
+    if(sys.argv[1] == "client" and sys.argv[2] == "postgres" ):
         observer_config["observer_port"] = config["clientObserver"]["port"]
-        client_postgres()
-    else:
+        client_process = client_postgres(config)
+    elif(sys.argv[1] == "server" and sys.argv[2] == "postgres"):
         observer_config["observer_port"] = config["serverObserver"]["port"]
-        server_postgres()
+        server_postgres(config)
+    elif(sys.argv[1] == "client" and sys.argv[2] == "mongo"):
+        pass
+    elif(sys.argv[1] == "server" and sys.argv[2] == "mongo"):
+        pass
+
+    # Starting observer
     observer_process = lib.start_observer(observer_config)
     observer_process.wait()
+    client_process.wait()

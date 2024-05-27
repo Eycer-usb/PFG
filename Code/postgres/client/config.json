@@ -5,18 +5,14 @@
         "name": "tpch",
         "user": "tpch",
         "password": "********",
-        "optimization": "--index",
-        "queryKey": "21",
-        "queryPath": "queries/21.sql",
         "rootPassword": "123456",
         "sshPort": "22",
         "restartCommand": "systemctl restart postgresql"
     },
     "executor": {
-        "iteration": "14",
         "clientObserver": {
             "address": "192.168.2.102",
-            "port": "43318"
+            "port": "43320"
         },
         "serverObserver": {
             "address": "192.168.2.102",

@@ -22,7 +22,7 @@ public class Main {
             System.exit(-1);
         } else {
             String configFilePath = args[0];
-            int port = Integer.valueOf(args[1]);
+            int port = Integer.parseInt(args[1]);
             JSONObject config = Utils.getJsonObjectFromFile(configFilePath);
             PostgresOrchestrator orchestrator = new PostgresOrchestrator(config);
             Analyst analyst = new Analyst(orchestrator);
