@@ -7,7 +7,10 @@
         "password": "********",
         "optimization": "--index",
         "queryKey": "21",
-        "queryPath": "queries/21.sql"
+        "queryPath": "queries/21.sql",
+        "rootPassword": "123456",
+        "sshPort": "22",
+        "restartCommand": "systemctl restart postgresql"
     },
     "executor": {
         "iteration": "14",

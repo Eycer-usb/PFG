@@ -20,7 +20,6 @@ void getConfigFromEnvironment()
     printf(TITLE "Setting Configurations" ENDL);
     const vector<string> variable{
         "SOCKET_PORT",
-        "EXECUTOR_PORT",
         "COLLECTOR_ENDPOINT"};
 
     for (size_t i = 0; i < variable.size(); i++)
@@ -47,8 +46,10 @@ int main(int argc, char const *argv[])
     // Error handling
     if (argc != 1)
     {
-        cout << "Usage: " << argv[0] << " <config.json>" << endl;
-        cout << "Example: " << argv[0] << " config.json" << endl;
+        cout << "Usage: " << argv[0] << endl;
+        cout << "Is necessary the follow environment variables:" << endl;
+        cout << "\tSOCKET_PORT - Port where the observer will listen" << argv[0] << endl;
+        cout << "\tCOLLECTOR_ENDPOINT - Service Endpoint to storage results" << argv[0] << endl;
         exit(EXIT_FAILURE);
     }
 

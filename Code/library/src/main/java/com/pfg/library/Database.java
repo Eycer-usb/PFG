@@ -11,7 +11,9 @@ public interface Database {
     public void runQuery();
     public void executeFile(String filepath) throws SQLException, IOException;
     public void connect();
+    public void close();
     public void restartService();
     public void dropDatabase();
-    public void close();
+    public void createDatabase();
+    public void loadBenchmark();
 }

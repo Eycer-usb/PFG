@@ -9,7 +9,7 @@ public class Analyst extends Communicable {
     private Orchestrator orchestrator;
     private JSONObject options;
 
-    Analyst(Orchestrator orchestrator) {
+    public Analyst(Orchestrator orchestrator) {
         super(new JSONObject()); // Config is empty in Communicable Server Mode
         this.orchestrator = orchestrator;
         this.options = orchestrator.getOptions();
@@ -36,7 +36,7 @@ public class Analyst extends Communicable {
         if (this.orchestrator.isValidOption(message)) {
             send("0");
             this.orchestrator.selectOption(message);
-            send(String.valueOf(this.orchestrator.run()));
+            send(String.valueOf(this.orchestrator.execute()));
         }
         else {
             System.out.println("Error applying option " + message);

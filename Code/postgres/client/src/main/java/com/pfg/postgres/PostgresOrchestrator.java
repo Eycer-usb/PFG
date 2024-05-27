@@ -1,30 +1,40 @@
 package com.pfg.postgres;
 
 import com.pfg.library.Orchestrator;
-import com.pfg.library.Utils;
-
-import netscape.javascript.JSObject;
-
 import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PostgresOrchestrator implements Orchestrator {
 
     public JSONObject config;
     private PGDB pgdb;
 
-    PostgresOrchestrator(JSONObject config){
+    PostgresOrchestrator(JSONObject config) {
         this.config = config;
         this.pgdb = new PGDB(config);
     }
 
     public JSONObject getOptions() {
-        JSONArray options;
-        options.add(new JSONObject("{\"label\":\"Base\", \"key\": \"base\"}"));
-        options.add(new JSONObject("{\"label\":\"Indexation\", \"key\": \"index\"}"));
-        options.add(new JSONObject("{\"label\":\"Compression\", \"key\": \"compression\"}"));
-        options.add(new JSONObject("{\"label\":\"Index and Compression\", \"key\": \"index-compression\"}"));
-        return options;
+        JSONParser parser = new JSONParser();
+        ArrayList<JSONObject> list = new ArrayList<JSONObject>();
+        HashMap<String, ArrayList<JSONObject>> map = new HashMap<String, ArrayList<JSONObject>>();
+
+        try {
+            list.add((JSONObject) parser.parse("{\"label\":\"Base\", \"key\": \"base\"}"));
+            list.add((JSONObject) parser.parse("{\"label\":\"Indexation\", \"key\": \"index\"}"));
+            list.add((JSONObject) parser.parse("{\"label\":\"Compression\", \"key\": \"compression\"}"));
+            list.add(
+                    (JSONObject) parser.parse("{\"label\":\"Index and Compression\", \"key\": \"index-compression\"}"));
+            map.put("options", list);
+            return new JSONObject(map);
+        } catch (ParseException e) {
+            System.out.println("Error parsing options");
+            e.printStackTrace();
+            return new JSONObject();
+        }
     }
 
     // Set Database configuration
@@ -49,21 +59,21 @@ public class PostgresOrchestrator implements Orchestrator {
 
     }
 
-
     // Verify if a given option is a valid option
     public boolean isValidOption(String message) {
-        if (message.equals("base") || message.equals("index") || 
-            message.equals("compression") || message.equals("index-compression")) {
+        if (message.equals("base") || message.equals("index") ||
+                message.equals("compression") || message.equals("index-compression")) {
             return true;
         }
         return false;
     }
 
-
-    // Run the 30 iteration over the 22 queries in the database configured in the selected option
-    private int execute(){
-        JSONObject databaseConfig =  (JSONObject) this.config.get("database");
-        JSObject executorConfig = (JSONObject) this.config.get("executor");
+    // Run the 30 iteration over the 22 queries in the database configured in the
+    // selected option
+    @SuppressWarnings("unchecked")
+    public int execute() {
+        JSONObject databaseConfig = (JSONObject) this.config.get("database");
+        JSONObject executorConfig = (JSONObject) this.config.get("executor");
         for (int i = 1; i <= 22; i++) {
             databaseConfig.put("queryKey", String.valueOf(i));
             databaseConfig.put("queryPath", "src/main/resources/queries/" + String.valueOf(i) + ".sql");
