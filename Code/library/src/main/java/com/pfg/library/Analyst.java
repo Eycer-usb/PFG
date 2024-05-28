@@ -35,7 +35,8 @@ public class Analyst extends Communicable {
     @Override
     protected void manageMessage(String message){
         if (this.orchestrator.isValidOption(message)) {
-            send("0");
+            System.out.println("Received option: " + message);
+            sendReceivedConfirmation();
             this.orchestrator.selectOption(message);
             send(String.valueOf(this.orchestrator.execute()));
         }

@@ -32,6 +32,8 @@ public class PGDB implements Database {
     private String rootPassword;
     private int sshPort;
     private String root;
+    private String optimizationsDir;
+    private String queriesDir;
     // constructor
 
     /**
@@ -51,6 +53,8 @@ public class PGDB implements Database {
         rootPassword = (String) databaseConfig.get("rootPassword");
         sshPort = Integer.parseInt((String) databaseConfig.get("sshPort"));
         root = "root";
+        optimizationsDir = (String) databaseConfig.get("optimizationsDirectory");
+        queriesDir = (String) databaseConfig.get("queriesDirectory");
     }
 
     /**
@@ -105,8 +109,12 @@ public class PGDB implements Database {
 
     public void close() {
         try {
+            if(this.conn == null || this.conn.isClosed()){
+                return;
+            }
             this.conn.close();
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Error Closing Connection");
         }
     }
@@ -161,9 +169,9 @@ public class PGDB implements Database {
     public void dropDatabase() {
         try {
             Connection c = DriverManager
-                    .getConnection("jdbc:postgresql://" + host + ":" + port, user, password);
+                    .getConnection("jdbc:postgresql://" + host + ":" + port + "/", user, password);
             Statement statement = c.createStatement();
-            statement.executeUpdate("DROP DATABASE " + databaseName);
+            statement.executeUpdate("DROP DATABASE IF EXISTS " + databaseName);
         } catch (SQLException e) {
             System.out.println("Error Dropping database");
             e.printStackTrace();
@@ -204,7 +212,7 @@ public class PGDB implements Database {
     public void createDatabase() {
         try {
             Connection c = DriverManager
-                    .getConnection("jdbc:postgresql://" + host + ":" + port, user, password);
+                    .getConnection("jdbc:postgresql://" + host + ":" + port + "/", user, password);
             Statement statement = c.createStatement();
             statement.executeUpdate("CREATE DATABASE " + databaseName);
         } catch (SQLException e) {
@@ -263,7 +271,7 @@ public class PGDB implements Database {
             loadBenchmark(false, false);
             prepareBenchmark();
             connect();
-            executeFile("src/main/resources/optimization/reset.sql");
+            executeFile(optimizationsDir + "/reset.sql");
         } catch (Exception e) {
             System.out.println("Error Setting up Base option");
             e.printStackTrace();
@@ -279,7 +287,7 @@ public class PGDB implements Database {
             loadBenchmark(true, false);
             prepareBenchmark();
             connect();
-            executeFile("src/main/resources/optimization/index.sql");
+            executeFile(optimizationsDir + "/index.sql");
 
         } catch (Exception e) {
             System.out.println("Error Setting up Index option");
@@ -296,7 +304,7 @@ public class PGDB implements Database {
             connect();
             prepareBenchmark();
             loadBenchmark(false, true);
-            executeFile("src/main/resources/optimization/reset.sql");
+            executeFile(optimizationsDir + "/reset.sql");
         } catch (Exception e) {
             System.out.println("Error Setting up Compress option");
             e.printStackTrace();
@@ -312,7 +320,7 @@ public class PGDB implements Database {
             connect();
             prepareBenchmark();
             loadBenchmark(true, true);
-            executeFile("src/main/resources/optimization/index.sql");
+            executeFile(optimizationsDir + "/index.sql");
 
         } catch (Exception e) {
             System.out.println("Error Setting up Index Compression option");

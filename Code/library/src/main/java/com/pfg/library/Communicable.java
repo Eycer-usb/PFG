@@ -39,6 +39,7 @@ public abstract class Communicable {
                     new InputStreamReader(clientSocket.getInputStream()));
             output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream())), true);
         } catch (Exception e) {
+            System.out.println("Error connecting to observer, is " + address + ":" + port + " listening?");
             e.printStackTrace();
             System.exit(-1);
         }
@@ -120,12 +121,12 @@ public abstract class Communicable {
         }
     }
 
-    private void sendReceivedConfirmation(){
+    protected void sendReceivedConfirmation(){
         System.out.println("Sending reception confirmation");
         output.println("0");
     }
 
     protected void manageMessage(String message){
-        System.out.println(message);
+        System.out.println("Option received:" + message);
     }
 }

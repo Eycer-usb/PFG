@@ -76,7 +76,8 @@ public class PostgresOrchestrator implements Orchestrator {
         JSONObject executorConfig = (JSONObject) this.config.get("executor");
         for (int i = 1; i <= 22; i++) {
             databaseConfig.put("queryKey", String.valueOf(i));
-            databaseConfig.put("queryPath", "src/main/resources/queries/" + String.valueOf(i) + ".sql");
+            databaseConfig.put("queryPath", 
+                (String) databaseConfig.get("queriesDirectory") + "/" + String.valueOf(i) + ".sql");
             config.put("database", databaseConfig);
             for (int j = 1; j <= 30; j++) {
                 executorConfig.put("iteration", String.valueOf(j));

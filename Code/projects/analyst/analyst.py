@@ -1,9 +1,9 @@
 import socket
+import json
 
 def send_message(selected_socket, message):
     print("Sending: " + message)
-    status = selected_socket.send((message + '\n').encode())
-    print(status)
+    selected_socket.send((message + '\n').encode())
     print("Waiting reception code")
     rec = selected_socket.recv(1).decode()
     if(rec == "0"):
@@ -23,6 +23,8 @@ def close(socket):
     if(send_message(socket, "9")):
         socket.close()
         print("OK")
+        return
+    print("Error closing connection")
 
 
 def create_sockets(config):
@@ -49,18 +51,44 @@ def select_orchestrator(orchestrators):
     print("Select orchestrator")
     for i, name in enumerate(orchestrators):
         print("{}) {}".format(i, name))
-    return int(input(">>"))
+    return int(input(">> "))
 
+def get_options(ssocket):
+    try:
+        return json.loads(receive_message(ssocket))["options"]
+    except:
+        print("Error Getting Options")
 
-def talk(selected_socket: socket):
-    print(receive_message(selected_socket))
-    close(selected_socket)
+def select_option(options):
+    if(len(options) == 0):
+        print("No available options in orchestrator")
+        return
+    print("Available options")
+    for i, opt in enumerate(options):
+        print("{}) {}".format(i, opt["label"]))
+    return options[int(input("> "))]
 
+def talk(ssocket: socket):
+    options = get_options(ssocket)
+    option = select_option(options)
+    close(ssocket)
+
+def send_option(ssocket, option):
+    print("Sending option: " + option["label"])
+    return send_message(ssocket, option["key"])
 
 def open(config):
     orchestrators, sockets = create_sockets(config)
     option_indx = select_orchestrator(orchestrators)
     selected_socket = sockets[option_indx]
-    talk(selected_socket)
+    options = get_options(selected_socket)
+    option = select_option(options)
+    if(send_option(selected_socket, option)):
+        print("Option Sended")
+    else:
+        print("Error Sending Option")
+
+    input("")
+    # close(selected_socket)
 
 

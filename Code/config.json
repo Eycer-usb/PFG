@@ -11,11 +11,13 @@
             "host": "localhost",
             "port": "5432",
             "name": "tpch",
-            "user": "tpch",
-            "password": "********",
+            "user": "postgres",
+            "password": "postgres",
             "rootPassword": "123456",
             "sshPort": "22",
-            "restartCommand": "systemctl restart postgresql"
+            "restartCommand": "systemctl restart postgresql",
+            "optimizationsDirectory": "postgres/client/optimization",
+            "queriesDirectory": "postgres/client/tpch-pgsql/query_root/perf_query_gen"
         }
     },
     "clientObservers": {
