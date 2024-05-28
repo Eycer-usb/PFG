@@ -1,7 +1,7 @@
 {
     "consoleCommand": "gnome-terminal",
     "orchestrator": {
-        "address": "192.168.2.102",
+        "address": "192.168.2.104",
         "port": "43316"
     },
     "database": {
@@ -15,15 +15,22 @@
         "restartCommand": "systemctl restart postgresql"
     },
     "clientObserver": {
-        "address": "192.168.2.102",
+        "address": "192.168.2.104",
         "port": "43320"
     },
     "serverObserver": {
-        "address": "192.168.2.102",
+        "address": "192.168.2.104",
         "port": "43319"
     },
     "collector": {
-        "directive": "http://192.168.2.102:43317/api/v1/directives/add",
-        "metrics": "http://192.168.2.102:43317/api/v1/client-metrics/add"
+    	"port": "43322",
+    	"db_host": "localhost",
+    	"db_port": "5432",
+    	"db_password": "********",
+    	"db_user": "collector",
+        "directive": "http://192.168.2.104:43317/api/v1/directives/add",
+        "client-metrics": "http://192.168.2.104:43317/api/v1/client-metrics/add",
+        "server-metrics": "http://192.168.2.104:43317/api/v1/server-metrics/add",
+        "analyst-get-all": "http://192.168.2.104:43317/api/v1/analyst/getAll"
     }
 }
