@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.List;
 
 import org.json.simple.JSONObject;
 
@@ -158,12 +159,12 @@ public class PGDB implements Database {
     }
 
     public void dropDatabase() {
-        try{
+        try {
             Connection c = DriverManager
                     .getConnection("jdbc:postgresql://" + host + ":" + port, user, password);
             Statement statement = c.createStatement();
             statement.executeUpdate("DROP DATABASE " + databaseName);
-        } catch( SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error Dropping database");
             e.printStackTrace();
             System.exit(-1);
@@ -211,14 +212,46 @@ public class PGDB implements Database {
             System.out.println("Error Creating Database");
             System.exit(-1);
         }
-        loadBenchmark();
     }
 
-    public void loadBenchmark() {
+    public void prepareBenchmark() {
+        String tpchPgsqlFile = "tpch_pgsql.py prepare";
+        String cwd = "postgres/client/tpch-pgsql";
 
+        String args = "-h " + host + " ";
+        args += "-p " + port + " ";
+        args += "-U " + user + " ";
+        args += "-W " + password + " ";
+        args += "-d " + databaseName + " ";
+
+        try {
+            Process p = Runtime.getRuntime().exec("python3 " + tpchPgsqlFile + " " + args,
+                    null, new File(cwd));
+            p.waitFor();
+        } catch (Exception e) {
+            System.out.println("Error preparing Benchmark");
+        }
     }
 
-    private void compressDatabase() {
+    public void loadBenchmark(boolean index, boolean compression) {
+        String tpchPgsqlFile = "tpch_pgsql.py load";
+        String cwd = "postgres/client/tpch-pgsql";
+
+        String args = "-h " + host + " ";
+        args += "-p " + port + " ";
+        args += "-U " + user + " ";
+        args += "-W " + password + " ";
+        args += "-d " + databaseName + " ";
+        if (!compression)
+            args += "-z ";
+
+        try {
+            Process p = Runtime.getRuntime().exec("python3 " + tpchPgsqlFile + " " + args,
+                    null, new File(cwd));
+            p.waitFor();
+        } catch (Exception e) {
+            System.out.println("Error loading Benchmark");
+        }
     }
 
     // Available Setups
@@ -227,6 +260,8 @@ public class PGDB implements Database {
             close();
             dropDatabase();
             createDatabase();
+            loadBenchmark(false, false);
+            prepareBenchmark();
             connect();
             executeFile("src/main/resources/optimization/reset.sql");
         } catch (Exception e) {
@@ -241,9 +276,11 @@ public class PGDB implements Database {
             close();
             dropDatabase();
             createDatabase();
+            loadBenchmark(true, false);
+            prepareBenchmark();
             connect();
             executeFile("src/main/resources/optimization/index.sql");
-            
+
         } catch (Exception e) {
             System.out.println("Error Setting up Index option");
             e.printStackTrace();
@@ -257,7 +294,8 @@ public class PGDB implements Database {
             dropDatabase();
             createDatabase();
             connect();
-            compressDatabase();
+            prepareBenchmark();
+            loadBenchmark(false, true);
             executeFile("src/main/resources/optimization/reset.sql");
         } catch (Exception e) {
             System.out.println("Error Setting up Compress option");
@@ -272,9 +310,10 @@ public class PGDB implements Database {
             dropDatabase();
             createDatabase();
             connect();
-            compressDatabase();
+            prepareBenchmark();
+            loadBenchmark(true, true);
             executeFile("src/main/resources/optimization/index.sql");
-            
+
         } catch (Exception e) {
             System.out.println("Error Setting up Index Compression option");
             e.printStackTrace();

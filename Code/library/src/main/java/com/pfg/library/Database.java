@@ -15,5 +15,4 @@ public interface Database {
     public void restartService();
     public void dropDatabase();
     public void createDatabase();
-    public void loadBenchmark();
 }
