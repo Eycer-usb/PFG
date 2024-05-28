@@ -227,19 +227,22 @@ public class PGDB implements Database {
         String action = "prepare";
         String cwd = "postgres/client/tpch-pgsql";
 
-        String args = "-H " + host + " ";
-        args += "-p " + port + " ";
-        args += "-U " + user + " ";
-        args += "-W " + password + " ";
-        args += "-d " + databaseName + " ";
-        String command = String.format("python3 tpch_pgsql.py %s %s", action, args );
-        // String command = "ls";
-        System.out.println(command);
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            ProcessBuilder processBuilder = new ProcessBuilder("python3",
+                    "tpch_pgsql.py", action,
+                    "-H", host, "-p", String.valueOf(port),
+                    "-U", user, "-W", password, "-d", databaseName);
             processBuilder.directory(new File(cwd));
-            processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
+            
+            // Capture and print the output
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+
             int exitCode = process.waitFor();
             System.out.println("Command exited with code " + exitCode);
         } catch (Exception e) {
@@ -250,28 +253,29 @@ public class PGDB implements Database {
 
     public void loadBenchmark(boolean index, boolean compression) {
         System.out.println("Loading Benchmark in database");
-        String tpchPgsqlFile = "tpch_pgsql.py load";
         String cwd = "postgres/client/tpch-pgsql";
-
-        String args = "-H " + host + " ";
-        args += "-p " + port + " ";
-        args += "-U " + user + " ";
-        args += "-W " + password + " ";
-        args += "-d " + databaseName + " ";
-        if (!compression)
-            args += "-z ";
-
+        String action = "load";
+        String compression_flag = "";
+        if(compression)
+            compression_flag = "-z";
         try {
-            Process process = Runtime.getRuntime().exec("python3 " + tpchPgsqlFile + " " + args,
-                    null, new File(cwd));
-            // Get the input stream and read from it
-            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String s = null;
-            while ((s = in.readLine()) != null) {
-                System.out.println(s);
+            ProcessBuilder processBuilder = new ProcessBuilder("python3",
+                    "tpch_pgsql.py", action,
+                    "-H", host, "-p", String.valueOf(port),
+                    "-U", user, "-W", password, "-d", databaseName, compression_flag);
+            processBuilder.directory(new File(cwd));
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+            
+            // Capture and print the output
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
             }
-            in.close();
-            process.waitFor();
+
+            int exitCode = process.waitFor();
+            System.out.println("Command exited with code " + exitCode);
         } catch (Exception e) {
             System.out.println("Error loading Benchmark");
         }
