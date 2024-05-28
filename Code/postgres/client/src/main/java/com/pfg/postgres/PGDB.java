@@ -109,7 +109,7 @@ public class PGDB implements Database {
 
     public void close() {
         try {
-            if(this.conn == null || this.conn.isClosed()){
+            if (this.conn == null || this.conn.isClosed()) {
                 return;
             }
             this.conn.close();
@@ -223,29 +223,37 @@ public class PGDB implements Database {
     }
 
     public void prepareBenchmark() {
-        String tpchPgsqlFile = "tpch_pgsql.py prepare";
+        System.out.println("Generating Benchmark Data");
+        String action = "prepare";
         String cwd = "postgres/client/tpch-pgsql";
 
-        String args = "-h " + host + " ";
+        String args = "-H " + host + " ";
         args += "-p " + port + " ";
         args += "-U " + user + " ";
         args += "-W " + password + " ";
         args += "-d " + databaseName + " ";
-
+        String command = String.format("python3 tpch_pgsql.py %s %s", action, args );
+        // String command = "ls";
+        System.out.println(command);
         try {
-            Process p = Runtime.getRuntime().exec("python3 " + tpchPgsqlFile + " " + args,
-                    null, new File(cwd));
-            p.waitFor();
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.directory(new File(cwd));
+            processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            System.out.println("Command exited with code " + exitCode);
         } catch (Exception e) {
             System.out.println("Error preparing Benchmark");
+            e.printStackTrace();
         }
     }
 
     public void loadBenchmark(boolean index, boolean compression) {
+        System.out.println("Loading Benchmark in database");
         String tpchPgsqlFile = "tpch_pgsql.py load";
         String cwd = "postgres/client/tpch-pgsql";
 
-        String args = "-h " + host + " ";
+        String args = "-H " + host + " ";
         args += "-p " + port + " ";
         args += "-U " + user + " ";
         args += "-W " + password + " ";
@@ -254,9 +262,16 @@ public class PGDB implements Database {
             args += "-z ";
 
         try {
-            Process p = Runtime.getRuntime().exec("python3 " + tpchPgsqlFile + " " + args,
+            Process process = Runtime.getRuntime().exec("python3 " + tpchPgsqlFile + " " + args,
                     null, new File(cwd));
-            p.waitFor();
+            // Get the input stream and read from it
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String s = null;
+            while ((s = in.readLine()) != null) {
+                System.out.println(s);
+            }
+            in.close();
+            process.waitFor();
         } catch (Exception e) {
             System.out.println("Error loading Benchmark");
         }
@@ -268,8 +283,8 @@ public class PGDB implements Database {
             close();
             dropDatabase();
             createDatabase();
-            loadBenchmark(false, false);
             prepareBenchmark();
+            loadBenchmark(false, false);
             connect();
             executeFile(optimizationsDir + "/reset.sql");
         } catch (Exception e) {
