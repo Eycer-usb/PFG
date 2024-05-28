@@ -3,6 +3,7 @@ import postgres.console.client as postgres_client
 import postgres.console.server as cserver
 import projects.collector.collector as collector
 import projects.observer.observer as lib
+import projects.analyst.analyst as analyst
 import json
 
 def print_help():
@@ -25,7 +26,7 @@ def server_postgres(config):
     pass
 
 def set_analyst(config):
-    pass
+    analyst.open(config)
 
 def set_collector(config):
     collector.prepare_resources(config)
@@ -75,14 +76,14 @@ if __name__ == '__main__':
         set_analyst(config)
     elif(sys.argv[2] == "client" and sys.argv[3] == "postgres" ):
         print("Running as Postgres Client")
-        observer_config["observer_port"] = config["clientObserver"]["port"]
+        observer_config["observer_port"] = config["clientObservers"]["postgres"]["port"]
         observer_config["collector_endpoint"] = config["collector"]["client-metrics"]
         client_process = client_postgres(config)
     elif(sys.argv[2] == "client" and sys.argv[3] == "mongo"):
         print("Running as Mongo Client")
     elif(sys.argv[2] == "server" and sys.argv[3] == "postgres"):
         print("Running as Postgres Server")
-        observer_config["observer_port"] = config["serverObserver"]["port"]
+        observer_config["observer_port"] = config["serverObservers"]["postgres"]["port"]
         observer_config["collector_endpoint"] = config["collector"]["server-metrics"]
         server_postgres(config)
     elif(sys.argv[2] == "server" and sys.argv[3] == "mongo"):

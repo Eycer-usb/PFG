@@ -69,10 +69,10 @@ def prepare_resources():
 
 def create_orchestrator_config_file(general_config, target_file):
     config = {
-        "database": general_config["database"],
+        "database": general_config["databases"]["postgres"],
         "executor": {
-            "clientObserver": general_config["clientObserver"],
-            "serverObserver": general_config["serverObserver"],
+            "clientObserver": general_config["clientObservers"]["postgres"],
+            "serverObserver": general_config["serverObservers"]["postgres"],
             "collector": {
                 "endpoint": general_config["collector"]["directive"]
             }
@@ -84,7 +84,7 @@ def create_orchestrator_config_file(general_config, target_file):
 
 def start(config):
     orchestrator_config = "orchestrator_config.json"
-    port = config["orchestrator"]["port"]
+    port = config["orchestrators"]["postgres"]["port"]
     if (create_orchestrator_config_file(config, orchestrator_config)):
         proc = subprocess.Popen([config["consoleCommand"], "--", "java", "-jar", 
                                postgres_orchestrator_jar, orchestrator_config, port ],

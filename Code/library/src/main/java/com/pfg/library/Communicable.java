@@ -81,6 +81,23 @@ public abstract class Communicable {
         return false;
     }
 
+    private boolean disconnect_server() {
+        System.out.println("Disconnect order received...");
+        sendReceivedConfirmation();
+        try {
+            clientSocket.close();
+            input.close();
+            output.close();
+            serverSocket.close();
+            System.out.println("Disconnected");
+            return true;
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return false;
+    }
+
     // Running as a Server
     public void listen(int port) throws IOException{
         serverSocket = new ServerSocket(port);
@@ -92,14 +109,20 @@ public abstract class Communicable {
     }
 
     public void talk() throws IOException{
+        System.out.println("Starting talk");
         String inputLine;
         while ((inputLine = input.readLine()) != null) {
             if("9".equals(inputLine)){
-                output.println("0");
+                disconnect_server();
                 break;
             }
             manageMessage(inputLine);
         }
+    }
+
+    private void sendReceivedConfirmation(){
+        System.out.println("Sending reception confirmation");
+        output.println("0");
     }
 
     protected void manageMessage(String message){
