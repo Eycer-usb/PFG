@@ -168,6 +168,7 @@ public class PGDB implements Database {
 
     public void dropDatabase() {
         try {
+            System.out.println("Dropping Database");
             Connection c = DriverManager
                     .getConnection("jdbc:postgresql://" + host + ":" + port + "/", user, password);
             Statement statement = c.createStatement();
@@ -181,6 +182,7 @@ public class PGDB implements Database {
 
     public void restartService() { // Connect via ssh and restart service
         try {
+            System.out.println("Restarting Service");
             JSch jsch = new JSch();
             Session session = jsch.getSession(root, host, sshPort);
             session.setPassword(rootPassword);
@@ -211,6 +213,7 @@ public class PGDB implements Database {
 
     public void createDatabase() {
         try {
+            System.out.println("Creating Database");
             Connection c = DriverManager
                     .getConnection("jdbc:postgresql://" + host + ":" + port + "/", user, password);
             Statement statement = c.createStatement();
@@ -235,7 +238,7 @@ public class PGDB implements Database {
             processBuilder.directory(new File(cwd));
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
-            
+
             // Capture and print the output
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
@@ -255,14 +258,26 @@ public class PGDB implements Database {
         System.out.println("Loading Benchmark in database");
         String cwd = "postgres/client/tpch-pgsql";
         String action = "load";
-        String compression_flag = "";
-        if(compression)
-            compression_flag = "-z";
+        String compression_flag = "-z";
+        String[] args;
+        if(compression) {
+            args = new String[]{
+                "python3",
+                "tpch_pgsql.py", action,
+                "-H", host, "-p", String.valueOf(port),
+                "-U", user, "-W", password, "-d", databaseName, compression_flag
+            };
+        }
+        else{
+            args = new String[]{
+                "python3",
+                "tpch_pgsql.py", action,
+                "-H", host, "-p", String.valueOf(port),
+                "-U", user, "-W", password, "-d", databaseName
+            };
+        }
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("python3",
-                    "tpch_pgsql.py", action,
-                    "-H", host, "-p", String.valueOf(port),
-                    "-U", user, "-W", password, "-d", databaseName, compression_flag);
+            ProcessBuilder processBuilder = new ProcessBuilder(args);
             processBuilder.directory(new File(cwd));
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();

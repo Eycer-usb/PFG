@@ -1,6 +1,6 @@
 import sys
 import postgres.console.client as postgres_client
-import postgres.console.server as cserver
+import postgres.console.server as postgres_server
 import projects.collector.collector as collector
 import projects.observer.observer as lib
 import projects.analyst.analyst as analyst
@@ -23,7 +23,8 @@ def client_postgres(config):
 
 
 def server_postgres(config):
-    pass
+    postgres_server.prepare_resources()
+    postgres_server.start()
 
 def set_analyst(config):
     analyst.open(config)
