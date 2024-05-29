@@ -60,18 +60,25 @@ def install_pg_squeeze():
 
 def locate_config_folder():
     print("Locating postgres config file...")
-    location = subprocess.check_output(["sudo", "-u", "postgres", "psql", "-c", "SHOW config_file"],
+    pg_conf = subprocess.check_output(["sudo", "-u", "postgres", "psql", "-c", "SHOW config_file"],
                                     stderr=subprocess.STDOUT ).decode("utf-8")
-    location = os.path.dirname(str(location.splitlines()[2]).strip())
+    location = os.path.dirname(str(pg_conf.splitlines()[2]).strip())
     
     folder = os.path.join(location, "conf.d")
     print(folder)
     assert(os.path.exists(location))
     if(not os.path.exists(folder)):
         os.makedirs(folder)
-    return folder
+    return folder, str(pg_conf.splitlines()[2]).strip()
 
-def update_config(location):
+def update_config(location, pg_conf):
+    # Allowing external connections
+    p = subprocess.run(["sudo", 'sed', '-i', 
+                        "s/^#listen_addresses = .*/listen_addresses = '\*'/g", 
+                        pg_conf], 
+                   capture_output=True, text=True,
+                    cwd="/" )
+    # Copping compress config file
     if(os.path.exists(os.path.join(location, "compress.conf"))):
         print("Config Already set")
         return
@@ -85,13 +92,14 @@ def update_config(location):
 
 
 
+
 def prepare_resources():
     download_pg_squeeze()
     prepare_pg_squeeze()
     compile_pg_squeeze()
     install_dependencies()
     install_pg_squeeze()
-    update_config(locate_config_folder())
+    update_config(*locate_config_folder())
 
 def start():
     print("Starting postgres service")
