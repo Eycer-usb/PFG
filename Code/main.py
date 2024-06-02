@@ -1,6 +1,8 @@
 import sys
 import postgres.console.client as postgres_client
 import postgres.console.server as postgres_server
+import mongo.console.client as mongo_client
+import mongo.console.server as mongo_server
 import projects.collector.collector as collector
 import projects.observer.observer as lib
 import projects.analyst.analyst as analyst
@@ -40,7 +42,8 @@ def get_config(filepath):
     return config
 
 def server_mongo(config):
-    pass
+    mongo_server.prepare_resources()
+    mongo_server.start()
         
 
 if __name__ == '__main__':

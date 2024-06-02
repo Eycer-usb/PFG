@@ -11,7 +11,7 @@ Methods:
 - generate          Create the data base with the data
 """
 class Mongo_TPCH:
-    def __init__(self, host, port, db_name, chunk_size=100000, threads_number=4):
+    def __init__(self, host, port, db_name, chunk_size=100000, threads_number=4, optimizations=[]):
         self.host = host
         self.port = port
         self.db_name = db_name
@@ -28,6 +28,8 @@ class Mongo_TPCH:
         self.db = self.client[self.db_name]
         self.threads_number = threads_number
         self.chunk_size = chunk_size
+        self.compression = "compression" in optimizations
+        self.index = "index" in optimizations
 
     def __del__(self):
         self.client.close()
@@ -48,6 +50,12 @@ class Mongo_TPCH:
         try:
             print("Setting Collection " + collection_name)
             schema = self.get_schema(collection_name)
+            if(self.compression):
+                compress_config = {
+                    "wiredTiger": { "configString": "block_compressor=zstd" }
+                }
+                self.db.create_collection(collection_name,
+                                          storageEngine=compress_config)
             
             with open( "tpch-dbgen/" + collection_name + ".tbl") as f:
                 csvreader = csv.reader(f, delimiter="|")

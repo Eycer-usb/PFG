@@ -4,10 +4,26 @@
         "postgres": {
             "address": "192.168.2.104",
             "port": "43317"
+        },
+        "mongo": {
+            "address": "192.168.2.104",
+            "port": "43317"
         }
     },
     "databases": {
         "postgres": {
+            "host": "localhost",
+            "port": "5432",
+            "name": "tpch",
+            "user": "postgres",
+            "password": "postgres",
+            "rootPassword": "123456",
+            "sshPort": "22",
+            "restartCommand": "systemctl restart postgresql",
+            "optimizationsDirectory": "postgres/client/optimization",
+            "queriesDirectory": "postgres/client/tpch-pgsql/query_root/perf_query_gen"
+        },
+        "mongo": {
             "host": "localhost",
             "port": "5432",
             "name": "tpch",
@@ -24,10 +40,18 @@
         "postgres": {
             "address": "192.168.2.104",
             "port": "43320"
+        },
+        "mongo": {
+            "address": "192.168.2.104",
+            "port": "43320"
         }
     },
     "serverObservers": {
         "postgres": {
+            "address": "192.168.2.104",
+            "port": "43319"
+        },
+        "mongo": {
             "address": "192.168.2.104",
             "port": "43319"
         }

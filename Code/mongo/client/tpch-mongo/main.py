@@ -14,8 +14,11 @@ Prepare the database:
 Create connection, drop the database
 and load with the tpch benchmark
 """
-def create():
-    db = Mongo_TPCH(HOST, PORT, DB_NAME)
+def create(host, port, db_name, optimizations):
+    HOST = host,
+    PORT = int(port,)
+    DB_NAME = db_name
+    db = Mongo_TPCH(HOST, PORT, DB_NAME, optimizations=optimizations)
     db.generate()
 
 def generate_queries():
@@ -50,8 +53,8 @@ if '__main__' == __name__:
         print_help()
     elif sys.argv[1] == 'create' and len(sys.argv) == 2:
         create()
-    elif sys.argv[1] == 'create' and len(sys.argv == 5):
-        create(sys.argv[2], sys.argv[3], sys.argv[4])
+    elif sys.argv[1] == 'create' and len(sys.argv) > 5:
+        create(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5:])
     elif sys.argv[1] == "generate-queries":
         generate_queries()
     else:
