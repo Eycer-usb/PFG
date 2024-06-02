@@ -1,0 +1,5 @@
+tpch-dbgen
+*.jar
+**/*.pyc
+target
+config.json

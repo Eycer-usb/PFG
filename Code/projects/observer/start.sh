@@ -9,9 +9,9 @@ make all
 
 # run 
 chmod +x julietX
-gnome-terminal -- bash -c "sudo -E ./julietX"
+gnome-terminal -- bash -c "sudo -E ./julietX;bash"
 
-export SOCKET_PORT=43319
+export SOCKET_PORT=43320
 export COLLECTOR_ENDPOINT="http://192.168.2.102:43317/api/v1/server-metrics/add"
 sudo -E ./julietX
 
