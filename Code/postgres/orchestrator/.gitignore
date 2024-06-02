@@ -1,4 +1,0 @@
-tpch-dbgen
-*.jar
-**/*.pyc
-queries/*

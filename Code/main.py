@@ -38,6 +38,9 @@ def get_config(filepath):
     with open(filepath) as f:
         config = json.load(f)
     return config
+
+def server_mongo(config):
+    pass
         
 
 if __name__ == '__main__':
@@ -89,6 +92,9 @@ if __name__ == '__main__':
         server_postgres(config)
     elif(sys.argv[2] == "server" and sys.argv[3] == "mongo"):
         print("Running as Mongo Server")
+        observer_config["observer_port"] = config["serverObservers"]["mongo"]["port"]
+        observer_config["collector_endpoint"] = config["collector"]["server-metrics"]
+        server_mongo(config)
 
     # Starting observer
     if(sys.argv[2] in observable_options):
