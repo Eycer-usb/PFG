@@ -104,6 +104,7 @@ class Mongo_TPCH:
     def generate(self):
         for collection in self.collections:
             self.set_collection(collection)
+        self.apply_optimizations()
 
     def insert(self, collection_name, chunk):
         self.db[collection_name].insert_many(chunk)
@@ -120,3 +121,56 @@ class Mongo_TPCH:
         else:
             print("Unknown type")
             return value
+    
+    def apply_optimizations(self):
+        self.default_indexes()
+        if(self.index):
+            self.added_index()
+            
+
+    def default_indexes(self):
+        print("Adding Default index to collections")
+        self.db['supplier'].create_index([('s_nationkey', 1)])
+        self.db['partsupp'].create_index([('ps_partkey', 1)])
+        self.db['partsupp'].create_index([('ps_suppkey', 1)])
+        self.db['customer'].create_index([('c_nationkey', 1)])
+        self.db['orders'].create_index([('o_custkey', 1)])
+        self.db['lineitem'].create_index([('l_orderkey', 1)])
+        self.db['lineitem'].create_index([('l_partkey', 1),
+                                          ('l_suppkey', 1)])
+        self.db['nation'].create_index([('n_regionkey', 1)])
+        
+
+    def added_index(self):
+        print("Adding Additional index to collections")
+        self.db['lineitem'].create_index([('L_SHIPDATE'.lower(), 1)])
+        self.db['lineitem'].create_index([('L_DISCOUNT'.lower(), 1)])
+        self.db['lineitem'].create_index([('L_QUANTITY'.lower(), 1)])
+        self.db['lineitem'].create_index([('L_SHIPMODE'.lower(), 1)])
+        self.db['lineitem'].create_index([('L_RETURNFLAG'.lower(), 1)])
+        self.db['lineitem'].create_index([('L_LINESTATUS'.lower(), 1)])
+        self.db['lineitem'].create_index([('L_COMMITDATE'.lower(), 1)])
+        self.db['lineitem'].create_index([('L_RECEIPTDATE'.lower(), 1)])
+        self.db['lineitem'].create_index([('L_SHIPINSTRUCT'.lower(), 1)])
+
+        self.db['part'].create_index([('P_TYPE'.lower(), 1)])
+        self.db['part'].create_index([('P_SIZE'.lower(), 1)])
+        self.db['part'].create_index([('P_BRAND'.lower(), 1)])
+        self.db['part'].create_index([('P_PARTKEY'.lower(), 1)])
+        self.db['part'].create_index([('P_CONTAINER'.lower(), 1)])
+
+        self.db['orders'].create_index([('O_ORDERKEY'.lower(), 1)])
+        self.db['orders'].create_index([('O_ORDERDATE'.lower(), 1)])
+        self.db['orders'].create_index([('O_ORDERSTATUS'.lower(), 1)])
+
+        self.db['supplier'].create_index([('S_SUPPKEY'.lower(), 1)])
+
+        self.db['customer'].create_index([('C_CUSTKEY'.lower(), 1)])
+        self.db['customer'].create_index([('C_ACCTBAL'.lower(), 1)])
+
+        self.db['nation'].create_index([('N_NAME'.lower(), 1)])
+
+        self.db['region'].create_index([('R_NAME'.lower(), 1)])
+        self.db['region'].create_index([('r_REGIONKEY'.lower(), 1)])
+
+    

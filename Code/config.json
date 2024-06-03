@@ -25,15 +25,14 @@
         },
         "mongo": {
             "host": "localhost",
-            "port": "5432",
+            "port": "27017",
             "name": "tpch",
-            "user": "postgres",
-            "password": "postgres",
+            "user": "mongo",
+            "password": "mongo",
             "rootPassword": "123456",
             "sshPort": "22",
-            "restartCommand": "systemctl restart postgresql",
-            "optimizationsDirectory": "postgres/client/optimization",
-            "queriesDirectory": "postgres/client/tpch-pgsql/query_root/perf_query_gen"
+            "restartCommand": "systemctl restart mongod",
+            "queriesDirectory": "mongo/client/tpch-mongo/queries"
         }
     },
     "clientObservers": {

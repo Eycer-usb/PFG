@@ -44,6 +44,15 @@ def get_config(filepath):
 def server_mongo(config):
     mongo_server.prepare_resources()
     mongo_server.start()
+
+
+def client_mongo(config):
+    try:
+        mongo_client.download_resources()
+        mongo_client.prepare_resources()
+        return mongo_client.start(config)
+    except:
+        print("Error Starting Postgres Client")
         
 
 if __name__ == '__main__':
@@ -88,6 +97,9 @@ if __name__ == '__main__':
         client_process = client_postgres(config)
     elif(sys.argv[2] == "client" and sys.argv[3] == "mongo"):
         print("Running as Mongo Client")
+        observer_config["observer_port"] = config["clientObservers"]["mongo"]["port"]
+        observer_config["collector_endpoint"] = config["collector"]["client-metrics"]
+        client_process = client_mongo(config)
     elif(sys.argv[2] == "server" and sys.argv[3] == "postgres"):
         print("Running as Postgres Server")
         observer_config["observer_port"] = config["serverObservers"]["postgres"]["port"]
