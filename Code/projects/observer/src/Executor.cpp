@@ -128,7 +128,7 @@ void Executor::startMonitoring(long pid){
     printf(ACTION "Starting Monitoring" ENDL);
     // Starting
     monitorThread.reset(new thread(&Executor::monitorThreadFunction, this, pid));
-    while (!this->monitor->isMonitoring); // Wait for monitoring to start
+    while (!this->monitor->isMonitoring()); // Wait for monitoring to start
     this->sendSuccess();
 }
 
