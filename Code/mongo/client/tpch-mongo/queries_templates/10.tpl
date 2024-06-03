@@ -1,4 +1,4 @@
-customer
+{"aggregate": "customer", "pipeline": 
 [
     {
         $lookup: {
@@ -84,3 +84,4 @@ customer
         $limit: 20
     }
 ]
+}

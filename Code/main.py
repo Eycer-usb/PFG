@@ -52,7 +52,7 @@ def client_mongo(config):
         mongo_client.prepare_resources()
         return mongo_client.start(config)
     except:
-        print("Error Starting Postgres Client")
+        print("Error Starting Mongo Client")
         
 
 if __name__ == '__main__':

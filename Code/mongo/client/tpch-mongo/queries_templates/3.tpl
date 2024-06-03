@@ -1,4 +1,4 @@
-customer
+{"aggregate": "customer", "pipeline": 
 [
     {
         $match: {
@@ -60,3 +60,4 @@ customer
         $limit: 10
     }
 ]
+}

@@ -1,4 +1,4 @@
-lineitem
+{"aggregate": "lineitem", "pipeline": 
 [
     {
         $group: {
@@ -58,3 +58,4 @@ lineitem
         $limit: 1
     }
 ]
+}

@@ -1,4 +1,4 @@
-supplier
+{"aggregate": "supplier", "pipeline":  
 [
     {
         $lookup: {
@@ -59,3 +59,4 @@ supplier
         }
     }
 ]
+}

@@ -1,4 +1,4 @@
-customer
+{"aggregate": "customer", "pipeline": 
 [
     {
         $addFields: {
@@ -53,3 +53,4 @@ customer
         $limit: 1
     }
 ]
+}

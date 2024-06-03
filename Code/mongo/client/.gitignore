@@ -1,3 +1,4 @@
 tpch-mongo/tpch-dbgen/
 __pycache__/
 tpch-mongo/queries/
+target/

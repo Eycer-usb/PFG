@@ -1,4 +1,4 @@
-lineitem
+{"aggregate": "lineitem", "pipeline": 
 [
   {
     $match: {
@@ -24,3 +24,4 @@ lineitem
   },
   { $limit: 1 }
 ]
+}

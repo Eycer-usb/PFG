@@ -1,4 +1,4 @@
-orders
+{"aggregate": "orders", "pipeline":  
 [
     {
         $match: {
@@ -70,3 +70,4 @@ orders
         $limit: 1
     }
 ]
+}

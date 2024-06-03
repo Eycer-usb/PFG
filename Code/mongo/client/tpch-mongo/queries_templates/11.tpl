@@ -1,4 +1,4 @@
-partsupp
+{"aggregate": "partsupp", "pipeline":  
 [
     {
         $lookup: {
@@ -79,3 +79,4 @@ partsupp
         $limit: 1
     }
 ]
+}

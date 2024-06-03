@@ -139,6 +139,15 @@ class Mongo_TPCH:
         self.db['lineitem'].create_index([('l_partkey', 1),
                                           ('l_suppkey', 1)])
         self.db['nation'].create_index([('n_regionkey', 1)])
+
+        self.db['part'].create_index([('p_partkey', 1)], unique=True)
+        self.db['supplier'].create_index([('s_suppkey', 1)], unique=True)
+        self.db['partsupp'].create_index([('ps_partkey', 1), ('ps_suppkey', 1)], unique=True)
+        self.db['customer'].create_index([('c_custkey', 1)], unique=True)
+        self.db['orders'].create_index([('o_orderkey', 1)], unique=True)
+        self.db['lineitem'].create_index([('l_orderkey', 1), ('l_linenumber', 1)], unique=True)
+        self.db['nation'].create_index([('n_nationkey', 1)], unique=True)
+        self.db['region'].create_index([('r_regionkey', 1)], unique=True)
         
 
     def added_index(self):

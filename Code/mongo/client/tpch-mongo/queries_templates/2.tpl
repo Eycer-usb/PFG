@@ -1,4 +1,4 @@
-part 
+{"aggregate": "part", "pipeline": 
 [
     {
         $match: {
@@ -86,3 +86,4 @@ part
         $limit: 100
     }
 ]
+}

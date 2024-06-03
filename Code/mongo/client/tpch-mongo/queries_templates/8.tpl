@@ -1,4 +1,4 @@
-part
+{"aggregate": "part", "pipeline": 
 [
     {
         $lookup: {
@@ -125,3 +125,4 @@ part
         $limit: 1
     }
 ]
+}

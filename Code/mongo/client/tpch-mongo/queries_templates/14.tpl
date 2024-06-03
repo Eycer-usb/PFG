@@ -1,4 +1,4 @@
-lineitem
+{"aggregate": "lineitem", "pipeline": 
 [
     {
         $lookup: {
@@ -47,3 +47,4 @@ lineitem
         $limit: 1
     }
 ]
+}
