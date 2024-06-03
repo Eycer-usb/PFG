@@ -24,6 +24,8 @@ public class Collector {
 
     String storeDirective(JSONObject directive) {
         try {
+            System.out.println("Storing Directive");
+            System.out.println(directive.toJSONString());
             String body = directive.toJSONString();
             var client = HttpClient.newHttpClient();
             var request = HttpRequest.newBuilder()

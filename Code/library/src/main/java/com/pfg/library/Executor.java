@@ -82,7 +82,10 @@ public class Executor {
                         clientPid));
             clientThread.start();
             this.serverObserver.startMonitoring(serverPid);
+            System.out.println("Server Observer Started");
             clientThread.join();
+            System.out.println("Client Observer Started");
+
         } catch (Exception e) {
             System.out.println("Error Starting Monitors");
             e.printStackTrace();
@@ -97,11 +100,12 @@ public class Executor {
                             this.clientObserver,
                             "stopMonitoring",
                             null));
-            System.out.println("Stopping Client Observer");
             clientThread.start();
-            System.out.println("Stopping Server Observer");
+
             this.serverObserver.stopMonitoring();
+            System.out.println("Server Observer Stopped");
             clientThread.join();
+            System.out.println("Client Observer Stopped");
 
         } catch (Exception e) {
             System.out.println("Error Stopping Monitors");
@@ -145,7 +149,6 @@ public class Executor {
 
     @SuppressWarnings("unchecked")
     protected String storeDirective(String clientPid, String serverPid, Timestamp startTimestamp, Timestamp endTimestamp){
-        System.out.println("Storing Directive");
         JSONObject directive = new JSONObject();
         directive.put("databaseKey", database.getDatabaseKey());
         directive.put("optimizationKey", database.getOptimizationKey());
@@ -156,7 +159,7 @@ public class Executor {
         directive.put("startTime", Long.toString(startTimestamp.getTime()));
         directive.put("endTime", Long.toString(endTimestamp.getTime()));
         directive.put("executionTime", Long.toString(getDuration(startTimestamp, endTimestamp)));
-
+        System.out.println(directive.toJSONString());
         String registryId = this.collector.storeDirective(directive);
         return registryId;
     }

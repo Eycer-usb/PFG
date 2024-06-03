@@ -6,7 +6,8 @@ using namespace std;
 // Sampling Time is the time between samples in seconds
 JulietMonitor::JulietMonitor(double samplingRate, double samplingTime)
 {
-    this->monitoring = true;
+    this->monitoring = false;
+    this->started_signal = false;
     this->sys = new System();
     this->cpu = sys->getCpu();
     cpu->initializate();
@@ -22,11 +23,13 @@ JulietMonitor::~JulietMonitor()
 void JulietMonitor::start(int pid)
 {
     this->monitoring = true;
+
     this->pid = pid;
     cout << "JulietMonitor started for process id " << pid << endl;
 
     while (this->monitoring)
     {
+        this->started_signal = true;
         vector<map<string, double>> sample = this->takeSample();
 
         if (sample.size() == 0)
@@ -37,6 +40,11 @@ void JulietMonitor::start(int pid)
         // Update total energy consumed
         this->updateEnergy(sample);
     }
+    this->started_signal = false;
+}
+
+bool JulietMonitor::isMonitoring(){
+    return this->started_signal;
 }
 
 pair<double, double> JulietMonitor::stop()

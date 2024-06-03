@@ -14,6 +14,7 @@ class JulietMonitor : public Monitor
 {
 private:
     bool monitoring;
+    bool started_signal;
     int pid;
     double samplingRate;
     double samplingTime;
@@ -30,6 +31,7 @@ public:
     ~JulietMonitor();
     void start(int pid);
     pair<double, double> stop();
+    bool isMonitoring();
     void updateEnergy(vector<map<string,double>> sample);
     vector<map<string,double>>  takeSample();
     double getEnergyConsumed(map<string,double> iteration);

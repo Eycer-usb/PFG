@@ -35,6 +35,19 @@ public class MongoDB extends GenericDatabase {
         super(config);
     }
 
+    public void execute(String query) {
+        Document result = database.runCommand(Document.parse(query));
+        // Print the result
+        System.out.println("Query: " + query);
+        System.out.println("Result: " + result.toJson());
+    }
+    
+    public void close() {
+        if (client != null) {
+            client.close();
+        }
+    }
+
     public String getConnectionPid() {
         try {
             Document serverStatus = database.runCommand(new Document("serverStatus", 1));
@@ -45,20 +58,14 @@ public class MongoDB extends GenericDatabase {
             System.out.println("Error getting Mongo PID");
             e.printStackTrace();
             System.exit(-1);
-            return "";
         }
+        return "";
     }
 
     public String getDatabaseKey() {
         return "mongodb";
     }
 
-    public void execute(String query) {
-        Document result = database.runCommand(Document.parse(query));
-        // Print the result
-        System.out.println("Query: " + query);
-        System.out.println("Result: " + result.toJson());
-    }
 
     public void connect() {
         if (client == null) {
@@ -69,11 +76,6 @@ public class MongoDB extends GenericDatabase {
         }
     }
 
-    public void close() {
-        if (client != null) {
-            client.close();
-        }
-    }
 
     public void dropDatabase() {
         // Already done in tpch-mongo benchmark
@@ -158,6 +160,7 @@ public class MongoDB extends GenericDatabase {
         try {
             prepareBenchmark();
             loadBenchmark(false, false);
+            setOptimizationKey("base");
         } catch (Exception e) {
             System.out.println("Error Setting up Base option");
             e.printStackTrace();
@@ -169,6 +172,7 @@ public class MongoDB extends GenericDatabase {
         try {
             loadBenchmark(true, false);
             prepareBenchmark();
+            setOptimizationKey("index");
 
         } catch (Exception e) {
             System.out.println("Error Setting up Index option");
@@ -181,6 +185,7 @@ public class MongoDB extends GenericDatabase {
         try {
             prepareBenchmark();
             loadBenchmark(false, true);
+            setOptimizationKey("compression");
         } catch (Exception e) {
             System.out.println("Error Setting up Compress option");
             e.printStackTrace();
@@ -192,6 +197,7 @@ public class MongoDB extends GenericDatabase {
         try {
             prepareBenchmark();
             loadBenchmark(true, true);
+            setOptimizationKey("index-compression");
 
         } catch (Exception e) {
             System.out.println("Error Setting up Index Compression option");

@@ -115,5 +115,10 @@ public abstract class GenericDatabase implements Database {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    protected void setOptimizationKey(String optimizationKey){
+        databaseConfig.put("optimization", optimizationKey);
+    }
+
 
 }

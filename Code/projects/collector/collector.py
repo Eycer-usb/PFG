@@ -16,7 +16,7 @@ def set_application_properties(config):
         "spring.datasource.url=jdbc:postgresql://{}:{}/collector".format(db_host, db_port),
         "spring.datasource.username={}".format(db_user),
         "spring.datasource.password={}".format(db_password),
-        "spring.jpa.hibernate.ddl-auto=create-drop",
+        "spring.jpa.hibernate.ddl-auto=update",
         "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect",
         "server.port={}".format(port)
     ]

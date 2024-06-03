@@ -123,6 +123,7 @@ def prepare_resources():
     compile_pg_squeeze()
     install_dependencies()
     install_pg_squeeze()
+    start()
     update_config(*locate_config_folder())
 
 def start():

@@ -37,7 +37,7 @@ Show the help message
 """
 def print_help():
     help = "Usage: main.py [option] \n Options: \n\
-    create [<host, port, db_name>]\t Create [or rewrite] TPCH database \n \
+    create <host> <port> <db_name> [index | compression | base] \t Create [or rewrite] TPCH database \n \
     generate-queries              \t Generate 22 mongo queries from tpch benchmark\
     "
 

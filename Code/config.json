@@ -2,12 +2,12 @@
     "consoleCommand": "gnome-terminal",
     "orchestrators": {
         "postgres": {
-            "address": "192.168.2.104",
+            "address": "192.168.2.109",
             "port": "43317"
         },
         "mongo": {
-            "address": "192.168.2.104",
-            "port": "43317"
+            "address": "192.168.2.109",
+            "port": "43318"
         }
     },
     "databases": {
@@ -32,27 +32,28 @@
             "rootPassword": "123456",
             "sshPort": "22",
             "restartCommand": "systemctl restart mongod",
+            "optimizationsDirectory": "",
             "queriesDirectory": "mongo/client/tpch-mongo/queries"
         }
     },
     "clientObservers": {
         "postgres": {
-            "address": "192.168.2.104",
-            "port": "43320"
+            "address": "192.168.2.109",
+            "port": "43319"
         },
         "mongo": {
-            "address": "192.168.2.104",
+            "address": "192.168.2.109",
             "port": "43320"
         }
     },
     "serverObservers": {
         "postgres": {
-            "address": "192.168.2.104",
-            "port": "43319"
+            "address": "192.168.2.109",
+            "port": "43321"
         },
         "mongo": {
-            "address": "192.168.2.104",
-            "port": "43319"
+            "address": "192.168.2.109",
+            "port": "43322"
         }
     },
     "collector": {
@@ -61,9 +62,9 @@
         "db_port": "5432",
         "db_password": "********",
         "db_user": "collector",
-        "directive": "http://192.168.2.104:43317/api/v1/directives/add",
-        "client-metrics": "http://192.168.2.104:43317/api/v1/client-metrics/add",
-        "server-metrics": "http://192.168.2.104:43317/api/v1/server-metrics/add",
-        "analyst-get-all": "http://192.168.2.104:43317/api/v1/analyst/getAll"
+        "directive": "http://192.168.2.109:43323/api/v1/directives/add",
+        "client-metrics": "http://192.168.2.109:43323/api/v1/client-metrics/add",
+        "server-metrics": "http://192.168.2.109:43323/api/v1/server-metrics/add",
+        "analyst-get-all": "http://192.168.2.109:43323/api/v1/analyst/getAll"
     }
 }
