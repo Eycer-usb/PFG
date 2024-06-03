@@ -77,8 +77,9 @@ public abstract class GenericDatabase implements Database {
         try {
             this.executeFile(queryPath);
         } catch (Exception e) {
+            System.out.println("Error Running query");
             System.err.println(e);
-            System.exit(-1);
+            // System.exit(-1);
         }
         System.out.println("Done");
     };

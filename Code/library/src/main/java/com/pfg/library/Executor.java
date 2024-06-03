@@ -145,6 +145,7 @@ public class Executor {
 
     @SuppressWarnings("unchecked")
     protected String storeDirective(String clientPid, String serverPid, Timestamp startTimestamp, Timestamp endTimestamp){
+        System.out.println("Storing Directive");
         JSONObject directive = new JSONObject();
         directive.put("databaseKey", database.getDatabaseKey());
         directive.put("optimizationKey", database.getOptimizationKey());

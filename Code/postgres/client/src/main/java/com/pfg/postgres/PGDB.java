@@ -210,6 +210,7 @@ public class PGDB extends GenericDatabase {
             loadBenchmark(false, false);
             connect();
             executeFile(optimizationsDir + "/reset.sql");
+            close();
         } catch (Exception e) {
             System.out.println("Error Setting up Base option");
             e.printStackTrace();
@@ -226,6 +227,7 @@ public class PGDB extends GenericDatabase {
             prepareBenchmark();
             connect();
             executeFile(optimizationsDir + "/index.sql");
+            close();
 
         } catch (Exception e) {
             System.out.println("Error Setting up Index option");
@@ -243,6 +245,7 @@ public class PGDB extends GenericDatabase {
             prepareBenchmark();
             loadBenchmark(false, true);
             executeFile(optimizationsDir + "/reset.sql");
+            close();
         } catch (Exception e) {
             System.out.println("Error Setting up Compress option");
             e.printStackTrace();
@@ -259,6 +262,7 @@ public class PGDB extends GenericDatabase {
             prepareBenchmark();
             loadBenchmark(true, true);
             executeFile(optimizationsDir + "/index.sql");
+            close();
 
         } catch (Exception e) {
             System.out.println("Error Setting up Index Compression option");
