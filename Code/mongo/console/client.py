@@ -4,7 +4,7 @@ import os
 import subprocess
 import json
 
-directory = "./mongo/client/tpch-pgsql"
+directory = "./mongo/client/tpch-mongo"
 folder_name = "tpch-dbgen"
 zipname = "dbgen.zip"
 library = "./library"

@@ -20,7 +20,8 @@ class MongoQGen:
         variables = self.get_variables(ddl_lines, sql_lines)
         mongo_query_lines = self.replace_variables_in_template(variables, template)
         if(self.save_query(mongo_query_lines, self.target, str(query_number) + ".js" )):
-            print("Query " + target + " generated successfully")
+            # print("Query " + target + " generated successfully")
+            pass
         else:
             print("Error generating query " + target)
 
@@ -68,9 +69,9 @@ class MongoQGen:
             regex = self.generate_regex_matcher(partition)
             values = re.match(regex, sql_line)
             if(not values): 
-                print("Dont Match")
-                print(regex, sql_line)
-                print(re.match(regex, sql_line))
+                # print("Dont Match")
+                # print(regex, sql_line)
+                # print(re.match(regex, sql_line))
                 continue
             values = values.groups()
             sep_apparitions = [ elem[1:] for elem in partition if re.match( sep, elem ) ]
@@ -102,7 +103,6 @@ class MongoQGen:
                         key = partition[i][1:]
                         partition[i] = variables[key]
                 new_line = "".join(partition)
-                print(new_line)
                 output_lines.append(new_line)
         return output_lines
     

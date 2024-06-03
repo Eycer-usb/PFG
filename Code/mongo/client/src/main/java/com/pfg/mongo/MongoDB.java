@@ -20,15 +20,16 @@ public class MongoDB extends GenericDatabase {
     private MongoClient client;
     private MongoDatabase database;
 
-      /**
-     * @param host              The host address
-     * @param port              Port in the host
-     * @param user              Username to login in database management system
-     * @param password          Password to login in database management system
-     * @param databaseName      Database to connect
-     * @param rootPassword      Password of the root user in the server, used to restart service
-     * @param sshPort           Port listening ssh connections
-     * @param queriesDir        Directory where the benchmark queries are stored
+    /**
+     * @param host         The host address
+     * @param port         Port in the host
+     * @param user         Username to login in database management system
+     * @param password     Password to login in database management system
+     * @param databaseName Database to connect
+     * @param rootPassword Password of the root user in the server, used to restart
+     *                     service
+     * @param sshPort      Port listening ssh connections
+     * @param queriesDir   Directory where the benchmark queries are stored
      */
     public MongoDB(JSONObject config) {
         super(config);
@@ -39,7 +40,7 @@ public class MongoDB extends GenericDatabase {
             Document serverStatus = database.runCommand(new Document("serverStatus", 1));
             JSONParser parser = new JSONParser();
             JSONObject serverStatusJson = (JSONObject) parser.parse(serverStatus.toJson());
-            return (String) serverStatusJson.get("pid");
+            return Long.toString((Long) serverStatusJson.get("pid"));
         } catch (Exception e) {
             System.out.println("Error getting Mongo PID");
             e.printStackTrace();
@@ -52,8 +53,7 @@ public class MongoDB extends GenericDatabase {
         return "mongodb";
     }
 
-
-    public void execute(String query){
+    public void execute(String query) {
         Document result = database.runCommand(Document.parse(query));
         // Print the result
         System.out.println("Query: " + query);
@@ -61,15 +61,19 @@ public class MongoDB extends GenericDatabase {
     }
 
     public void connect() {
-        String connectionString = "mongodb://" + host + ":" + port;
-        client = MongoClients.create(connectionString);
-        database = client.getDatabase(databaseName);
+        if (client == null) {
+            System.out.println("Connecting to Mongo Server");
+            String connectionString = "mongodb://" + host + ":" + port;
+            client = MongoClients.create(connectionString);
+            database = client.getDatabase(databaseName);
+        }
     }
 
     public void close() {
-        client.close();
+        if (client != null) {
+            client.close();
+        }
     }
-
 
     public void dropDatabase() {
         // Already done in tpch-mongo benchmark
@@ -112,17 +116,23 @@ public class MongoDB extends GenericDatabase {
         String action = "create";
         String compression_flag = "compression";
         String index_flag = "index";
-        ArrayList<String> args = new ArrayList<String>(Arrays.asList("python3",
+        String base_flag = "base";
+        ArrayList<String> args = new ArrayList<>(Arrays.asList("python3",
                 "main.py", action,
                 host, String.valueOf(port),
                 databaseName));
         if (compression) {
             args.add(compression_flag);
-            
+
         }
         if (index) {
             args.add(index_flag);
         }
+
+        if (!compression && !index) {
+            args.add(base_flag);
+        }
+
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(args);
             processBuilder.directory(new File(cwd));
@@ -146,12 +156,8 @@ public class MongoDB extends GenericDatabase {
     // Available Setups
     public void setBase() {
         try {
-            close();
-            dropDatabase();
-            createDatabase();
             prepareBenchmark();
             loadBenchmark(false, false);
-            connect();
         } catch (Exception e) {
             System.out.println("Error Setting up Base option");
             e.printStackTrace();
@@ -161,12 +167,8 @@ public class MongoDB extends GenericDatabase {
 
     public void setIndex() {
         try {
-            close();
-            dropDatabase();
-            createDatabase();
             loadBenchmark(true, false);
             prepareBenchmark();
-            connect();
 
         } catch (Exception e) {
             System.out.println("Error Setting up Index option");
@@ -177,10 +179,6 @@ public class MongoDB extends GenericDatabase {
 
     public void setCompression() {
         try {
-            close();
-            dropDatabase();
-            createDatabase();
-            connect();
             prepareBenchmark();
             loadBenchmark(false, true);
         } catch (Exception e) {
@@ -192,10 +190,6 @@ public class MongoDB extends GenericDatabase {
 
     public void setIndexCompression() {
         try {
-            close();
-            dropDatabase();
-            createDatabase();
-            connect();
             prepareBenchmark();
             loadBenchmark(true, true);
 
