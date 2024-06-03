@@ -2,12 +2,7 @@ package com.pfg.mongo;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,49 +10,28 @@ import org.bson.Document;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import com.pfg.library.Database;
+import com.pfg.library.GenericDatabase;
 
-public class MongoDB implements Database {
+public class MongoDB extends GenericDatabase {
 
     private MongoClient client;
-    private JSONObject databaseConfig;
     private MongoDatabase database;
-    private String host;
-    private String port;
-    private String user;
-    private String password;
-    private String databaseName;
-    private String rootPassword;
-    private int sshPort;
-    private String root;
-    private String queriesDir;
 
-    // constructor
-
-    /**
-     * @param host     The host name of the database server.
-     * @param port     The port number of the database server.
-     * @param user     The username to use for authentication.
-     * @param password The password to use for authentication.
-     * @param database The name of the database to connect to.
+      /**
+     * @param host              The host address
+     * @param port              Port in the host
+     * @param user              Username to login in database management system
+     * @param password          Password to login in database management system
+     * @param databaseName      Database to connect
+     * @param rootPassword      Password of the root user in the server, used to restart service
+     * @param sshPort           Port listening ssh connections
+     * @param queriesDir        Directory where the benchmark queries are stored
      */
     public MongoDB(JSONObject config) {
-        this.databaseConfig = (JSONObject) config.get("database");
-        host = (String) databaseConfig.get("host");
-        port = (String) databaseConfig.get("port");
-        user = (String) databaseConfig.get("user");
-        password = (String) databaseConfig.get("password");
-        databaseName = (String) databaseConfig.get("name");
-        rootPassword = (String) databaseConfig.get("rootPassword");
-        sshPort = Integer.parseInt((String) databaseConfig.get("sshPort"));
-        root = "root";
-        queriesDir = (String) databaseConfig.get("queriesDirectory");
+        super(config);
     }
 
     public String getConnectionPid() {
@@ -78,25 +52,6 @@ public class MongoDB implements Database {
         return "mongodb";
     }
 
-    public String getOptimizationKey() {
-        return (String) this.databaseConfig.get("optimization");
-    }
-
-    public String getQueryKey() {
-        return (String) this.databaseConfig.get("queryKey");
-    }
-
-    public void runQuery() {
-        System.out.println("Running Query");
-        String queryPath = (String) this.databaseConfig.get("queryPath");
-        try {
-            this.executeFile(queryPath);
-        } catch (Exception e) {
-            System.err.println(e);
-            System.exit(-1);
-        }
-        System.out.println("Done");
-    }
 
     public void execute(String query){
         Document result = database.runCommand(Document.parse(query));
@@ -105,51 +60,16 @@ public class MongoDB implements Database {
         System.out.println("Result: " + result.toJson());
     }
 
-    public void executeFile(String filepath) throws SQLException, IOException {
-        Path path = new File(filepath).toPath();
-        String file = Files.readAllLines(path).stream().reduce("", (a, b) -> a + "\n" + b);
-        execute(file);
-    }
-
     public void connect() {
         String connectionString = "mongodb://" + host + ":" + port;
         client = MongoClients.create(connectionString);
+        database = client.getDatabase(databaseName);
     }
 
     public void close() {
         client.close();
     }
 
-    public void restartService() {
-        try {
-            System.out.println("Restarting Service");
-            JSch jsch = new JSch();
-            Session session = jsch.getSession(root, host, sshPort);
-            session.setPassword(rootPassword);
-            session.setConfig("StrictHostKeyChecking", "no");
-            System.out.println("Establishing Connection...");
-            session.connect();
-            System.out.println("Connection established.");
-
-            ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
-            InputStream in = channelExec.getInputStream();
-
-            // Running the command
-            String command = (String) databaseConfig.get("restartCommand");
-            channelExec.setCommand(command);
-            channelExec.connect();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-            channelExec.disconnect();
-
-        } catch (Exception e) {
-            System.out.println("Error Restarting Service in host");
-        }
-    }
 
     public void dropDatabase() {
         // Already done in tpch-mongo benchmark

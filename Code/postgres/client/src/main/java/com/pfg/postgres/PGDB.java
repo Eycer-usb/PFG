@@ -1,17 +1,11 @@
 package com.pfg.postgres;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.*;
-import java.util.List;
 
 import org.json.simple.JSONObject;
 
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
-import com.pfg.library.Database;
+import com.pfg.library.GenericDatabase;
 
 /**
  * A very simple PostgreSQL database client.
@@ -20,41 +14,24 @@ import com.pfg.library.Database;
  *
  * @constructor Creates a new PostgreSQL database client.
  */
-public class PGDB implements Database {
+public class PGDB extends GenericDatabase {
 
     private Connection conn;
-    private JSONObject databaseConfig;
-    private String host;
-    private String port;
-    private String user;
-    private String password;
-    private String databaseName;
-    private String rootPassword;
-    private int sshPort;
-    private String root;
-    private String optimizationsDir;
-    private String queriesDir;
-    // constructor
+   
 
     /**
-     * @param host     The host name of the database server.
-     * @param port     The port number of the database server.
-     * @param user     The username to use for authentication.
-     * @param password The password to use for authentication.
-     * @param database The name of the database to connect to.
+     * @param host              The host address
+     * @param port              Port in the host
+     * @param user              Username to login in database management system
+     * @param password          Password to login in database management system
+     * @param databaseName      Database to connect
+     * @param rootPassword      Password of the root user in the server, used to restart service
+     * @param sshPort           Port listening ssh connections
+     * @param optimizationsDir  Directory where optimizations are stored if apply 
+     * @param queriesDir        Directory where the benchmark queries are stored
      */
     public PGDB(JSONObject config) {
-        this.databaseConfig = (JSONObject) config.get("database");
-        host = (String) databaseConfig.get("host");
-        port = (String) databaseConfig.get("port");
-        user = (String) databaseConfig.get("user");
-        password = (String) databaseConfig.get("password");
-        databaseName = (String) databaseConfig.get("name");
-        rootPassword = (String) databaseConfig.get("rootPassword");
-        sshPort = Integer.parseInt((String) databaseConfig.get("sshPort"));
-        root = "root";
-        optimizationsDir = (String) databaseConfig.get("optimizationsDirectory");
-        queriesDir = (String) databaseConfig.get("queriesDirectory");
+        super(config);
     }
 
     /**
@@ -66,18 +43,6 @@ public class PGDB implements Database {
         Statement stmt = conn.createStatement();
         stmt.execute(sql);
         stmt.close();
-    }
-
-    /**
-     * Executes a SQL query.
-     *
-     * @param sql The SQL query to execute.
-     * @return The result set of the query.
-     */
-    public ResultSet query(String sql) throws SQLException {
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
-        return rs;
     }
 
     /**
@@ -94,17 +59,6 @@ public class PGDB implements Database {
         rs.close();
         stmt.close();
         return result;
-    }
-
-    /**
-     * Executes a SQL file.
-     *
-     * @param filename The name of the file to execute.
-     */
-    public void executeFile(String filename) throws SQLException, IOException {
-        Path path = new File(filename).toPath();
-        String file = Files.readAllLines(path).stream().reduce("", (a, b) -> a + "\n" + b);
-        execute(file);
     }
 
     public void close() {
@@ -133,25 +87,6 @@ public class PGDB implements Database {
         return "postgres";
     }
 
-    public String getOptimizationKey() {
-        return (String) this.databaseConfig.get("optimization");
-    };
-
-    public String getQueryKey() {
-        return (String) this.databaseConfig.get("queryKey");
-    };
-
-    public void runQuery() {
-        System.out.println("Running Query");
-        String queryPath = (String) this.databaseConfig.get("queryPath");
-        try {
-            this.executeFile(queryPath);
-        } catch (Exception e) {
-            System.err.println(e);
-            System.exit(-1);
-        }
-        System.out.println("Done");
-    };
 
     public void connect() {
         String url = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
@@ -177,37 +112,6 @@ public class PGDB implements Database {
             System.out.println("Error Dropping database");
             e.printStackTrace();
             System.exit(-1);
-        }
-    }
-
-    public void restartService() { // Connect via ssh and restart service
-        try {
-            System.out.println("Restarting Service");
-            JSch jsch = new JSch();
-            Session session = jsch.getSession(root, host, sshPort);
-            session.setPassword(rootPassword);
-            session.setConfig("StrictHostKeyChecking", "no");
-            System.out.println("Establishing Connection...");
-            session.connect();
-            System.out.println("Connection established.");
-
-            ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
-            InputStream in = channelExec.getInputStream();
-
-            // Running the command
-            String command = (String) databaseConfig.get("restartCommand");
-            channelExec.setCommand(command);
-            channelExec.connect();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-            channelExec.disconnect();
-
-        } catch (Exception e) {
-            System.out.println("Error Restarting Postgresql Service in host");
         }
     }
 
