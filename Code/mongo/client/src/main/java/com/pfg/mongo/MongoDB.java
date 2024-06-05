@@ -3,6 +3,8 @@ package com.pfg.mongo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -14,6 +16,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.pfg.library.GenericDatabase;
+import com.pfg.mongo.queries.Query;
 
 public class MongoDB extends GenericDatabase {
 
@@ -35,11 +38,11 @@ public class MongoDB extends GenericDatabase {
         super(config);
     }
 
-    public void execute(String query) {
-        Document result = database.runCommand(Document.parse(query));
-        // Print the result
-        System.out.println("Query: " + query);
-        System.out.println("Result: " + result.toJson());
+    public void execute(String args) {
+        int queryKey = Integer.parseInt((String) databaseConfig.get("queryKey"));
+        String[] argsArray = args.split(" ");
+        Query query = QueryFactory.create(queryKey, argsArray);
+        query.run(database);
     }
     
     public void close() {
