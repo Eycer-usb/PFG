@@ -1,0 +1,8 @@
+psycopg2-binary
+mock
+numpy
+matplotlib
+pandas
+scipy
+statsmodels
+psutil
