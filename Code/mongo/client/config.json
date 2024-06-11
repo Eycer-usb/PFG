@@ -1,0 +1,25 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": "5432",
+        "name": "tpch",
+        "user": "tpch",
+        "password": "********",
+        "rootPassword": "123456",
+        "sshPort": "22",
+        "restartCommand": "systemctl restart postgresql"
+    },
+    "executor": {
+        "clientObserver": {
+            "address": "192.168.2.102",
+            "port": "43320"
+        },
+        "serverObserver": {
+            "address": "192.168.2.102",
+            "port": "43319"
+        },
+        "collector": {
+            "endpoint": "http://192.168.2.102:43317/api/v1/directives/add"
+        }
+    }
+}

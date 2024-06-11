@@ -1,0 +1,262 @@
+{
+    "nation": [
+        {
+            "name": "n_nationkey",
+            "type": "int"
+        },
+        {
+            "name": "n_name",
+            "type": "string"
+        },
+        {
+            "name": "n_regionkey",
+            "type": "int"
+        },
+        {
+            "name": "n_comment",
+            "type": "string"
+        }
+    ],
+    "region": [
+        {
+            "name": "r_regionkey",
+            "type": "int"
+        },
+        {
+            "name": "r_name",
+            "type": "string"
+        },
+        {
+            "name": "r_comment",
+            "type": "string"
+        }
+    ],
+    "part": [
+        {
+            "name": "p_partkey",
+            "type": "int"
+        },
+        {
+            "name": "p_name",
+            "type": "string"
+        },
+        {
+            "name": "p_mfgr",
+            "type": "string"
+        },
+        {
+            "name": "p_brand",
+            "type": "string"
+        },
+        {
+            "name": "p_type",
+            "type": "string"
+        },
+        {
+            "name": "p_size",
+            "type": "int"
+        },
+        {
+            "name": "p_container",
+            "type": "string"
+        },
+        {
+            "name": "p_retailprice",
+            "type": "float"
+        },
+        {
+            "name": "p_comment",
+            "type": "string"
+        }
+    ],
+    "supplier": [
+        {
+            "name": "s_suppkey",
+            "type": "int"
+        },
+        {
+            "name": "s_name",
+            "type": "string"
+        },
+        {
+            "name": "s_address",
+            "type": "string"
+        },
+        {
+            "name": "s_nationkey",
+            "type": "int"
+        },
+        {
+            "name": "s_phone",
+            "type": "string"
+        },
+        {
+            "name": "s_acctbal",
+            "type": "float"
+        },
+        {
+            "name": "s_comment",
+            "type": "string"
+        }
+    ],
+    "partsupp": [
+        {
+            "name": "ps_partkey",
+            "type": "int"
+        },
+        {
+            "name": "ps_suppkey",
+            "type": "int"
+        },
+        {
+            "name": "ps_availqty",
+            "type": "int"
+        },
+        {
+            "name": "ps_supplycost",
+            "type": "float"
+        },
+        {
+            "name": "ps_comment",
+            "type": "string"
+        }
+    ],
+    "customer": [
+        {
+            "name": "c_custkey",
+            "type": "int"
+        },
+        {
+            "name": "c_name",
+            "type": "string"
+        },
+        {
+            "name": "c_address",
+            "type": "string"
+        },
+        {
+            "name": "c_nationkey",
+            "type": "int"
+        },
+        {
+            "name": "c_phone",
+            "type": "string"
+        },
+        {
+            "name": "c_acctbal",
+            "type": "float"
+        },
+        {
+            "name": "c_mktsegment",
+            "type": "string"
+        },
+        {
+            "name": "c_comment",
+            "type": "string"
+        }
+    ],
+    "orders": [
+        {
+            "name": "o_orderkey",
+            "type": "int"
+        },
+        {
+            "name": "o_custkey",
+            "type": "int"
+        },
+        {
+            "name": "o_orderstatus",
+            "type": "string"
+        },
+        {
+            "name": "o_totalprice",
+            "type": "float"
+        },
+        {
+            "name": "o_orderdate",
+            "type": "date"
+        },
+        {
+            "name": "o_orderpriority",
+            "type": "string"
+        },
+        {
+            "name": "o_clerk",
+            "type": "string"
+        },
+        {
+            "name": "o_shippriority",
+            "type": "int"
+        },
+        {
+            "name": "o_comment",
+            "type": "string"
+        }
+    ],
+    "lineitem": [
+        {
+            "name": "l_orderkey",
+            "type": "int"
+        },
+        {
+            "name": "l_partkey",
+            "type": "int"
+        },
+        {
+            "name": "l_suppkey",
+            "type": "int"
+        },
+        {
+            "name": "l_linenumber",
+            "type": "int"
+        },
+        {
+            "name": "l_quantity",
+            "type": "float"
+        },
+        {
+            "name": "l_extendedprice",
+            "type": "float"
+        },
+        {
+            "name": "l_discount",
+            "type": "float"
+        },
+        {
+            "name": "l_tax",
+            "type": "float"
+        },
+        {
+            "name": "l_returnflag",
+            "type": "string"
+        },
+        {
+            "name": "l_linestatus",
+            "type": "string"
+        },
+        {
+            "name": "l_shipdate",
+            "type": "date"
+        },
+        {
+            "name": "l_commitdate",
+            "type": "date"
+        },
+        {
+            "name": "l_receiptdate",
+            "type": "date"
+        },
+        {
+            "name": "l_shipinstruct",
+            "type": "string"
+        },
+        {
+            "name": "l_shipmode",
+            "type": "string"
+        },
+        {
+            "name": "l_comment",
+            "type": "string"
+        }
+    ]
+}

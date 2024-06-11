@@ -1,0 +1,9 @@
+-- Force compression after load data
+SELECT squeeze.squeeze_table('public', 'part', null, null, null);
+SELECT squeeze.squeeze_table('public', 'supplier', null, null, null);
+SELECT squeeze.squeeze_table('public', 'partsupp', null, null, null);
+SELECT squeeze.squeeze_table('public', 'customer', null, null, null);
+SELECT squeeze.squeeze_table('public', 'orders', null, null, null);
+SELECT squeeze.squeeze_table('public', 'lineitem', null, null, null);
+SELECT squeeze.squeeze_table('public', 'nation', null, null, null);
+SELECT squeeze.squeeze_table('public', 'region', null, null, null);

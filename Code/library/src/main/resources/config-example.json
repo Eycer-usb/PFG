@@ -1,0 +1,26 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": "5432",
+        "name": "tpch",
+        "user": "postgres",
+        "password": "********",
+        "optimization": "--index-compress",
+        "queryKey": "22",
+        "queryPath": "queries/22.sql"
+    },
+    "executor": {
+        "iteration": "30",
+        "clientObserver": {
+            "address": "192.168.2.102",
+            "port": "43316"
+        },
+        "serverObserver": {
+            "address": "192.168.2.102",
+            "port": "43317"
+        },
+        "collector": {
+            "endpoint": "http://192.168.2.102:8000/directives/add"
+        }
+    }
+}
