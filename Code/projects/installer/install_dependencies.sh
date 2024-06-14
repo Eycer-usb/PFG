@@ -80,7 +80,8 @@ if [ ${postgres} = true ]; then
     postgresql-14 \
     postgresql-server-dev-14 \
     postgresql-contrib \
-    postgresql-server-dev-all
+    postgresql-server-dev-all \
+    libcurl4-openssl-dev
 fi
 
 # Mongodb Installation
@@ -92,6 +93,7 @@ if [ ${mongo} = true ]; then
    --dearmor
   echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
   sudo apt-get update
-  sudo apt-get install -y mongodb-org
+  sudo apt-get install -y mongodb-org \
+    libcurl4-openssl-dev
   sudo systemctl start mongod
 fi

@@ -21,7 +21,8 @@ sudo apt install -y postgresql-common \
     postgresql-14 \
     postgresql-server-dev-14 \
     postgresql-contrib \
-    postgresql-server-dev-all
+    postgresql-server-dev-all \
+    libcurl4-openssl-dev
 ```
 
 for each case
