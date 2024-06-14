@@ -61,7 +61,7 @@ def install_pg_squeeze():
 def locate_config_folder():
     print("Locating postgres config file...")
     pg_conf = subprocess.check_output(["sudo", "-u", "postgres", "psql", "-c", "SHOW config_file"],
-                                    stderr=subprocess.STDOUT ).decode("utf-8")
+                                     ).decode("utf-8")
     location = os.path.dirname(str(pg_conf.splitlines()[2]).strip())
     
     folder = os.path.join(location, "conf.d")
@@ -85,34 +85,34 @@ def update_config(location, pg_conf):
         print("Error setting compression configuration")
     
     # Allowing external connections
-    print("Allowing external connections")
-    p = subprocess.run(["sudo", 'sed', '-i', 
-                        "s/^#listen_addresses = .*/listen_addresses = '\*'/g", 
-                        pg_conf], 
-                   capture_output=True, text=True,
-                    cwd="/" )
-    if(p.returncode != 0):
-        print("Error updating postgresql.conf file")
+    # print("Allowing external connections")
+    # p = subprocess.run(["sudo", 'sed', '-i', 
+    #                     "s/^#listen_addresses = .*/listen_addresses = '\*'/g", 
+    #                     pg_conf], 
+    #                capture_output=True, text=True,
+    #                 cwd="/" )
+    # if(p.returncode != 0):
+    #     print("Error updating postgresql.conf file")
 
-    lines = [
-        "host\tall\tall\t0.0.0.0/0\tmd5\n",
-        "host\tall\tall\t::/0\tmd5\n"
-        ]
-    updated = False
-    with open(os.path.join(os.path.dirname(pg_conf), "pg_hba.conf"), "r") as f:
-        # TODO: Use regex for validation
-        if lines[0] in f.readlines() or lines[1] in f.readlines():
-            updated = True
+    # lines = [
+    #     "host\tall\tall\t0.0.0.0/0\tmd5\n",
+    #     "host\tall\tall\t::/0\tmd5\n"
+    #     ]
+    # updated = False
+    # with open(os.path.join(os.path.dirname(pg_conf), "pg_hba.conf"), "r") as f:
+    #     # TODO: Use regex for validation
+    #     if lines[0] in f.readlines() or lines[1] in f.readlines():
+    #         updated = True
 
-    with open(os.path.join(os.path.dirname(pg_conf), "pg_hba.conf"), "a") as f:
-        if not updated:
-            f.writelines(lines)
-        else:
-            print("pg_hba.config already set")
+    # with open(os.path.join(os.path.dirname(pg_conf), "pg_hba.conf"), "a") as f:
+    #     if not updated:
+    #         f.writelines(lines)
+    #     else:
+    #         print("pg_hba.config already set")
         
 
-    if(p.returncode != 0):
-        print("Error updating pg_hba.conf file")
+    # if(p.returncode != 0):
+    #     print("Error updating pg_hba.conf file")
 
 
 
