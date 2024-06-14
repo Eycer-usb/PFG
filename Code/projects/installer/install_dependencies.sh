@@ -48,6 +48,7 @@ if [ $maven  = true]; then
     echo 'export M2=$M2_HOME/bin' >>~/.bashrc
     echo 'export MAVEN_OPTS=-"Xms256m -Xmx512m"' >>~/.bashrc
     echo 'export PATH=$M2:$PATH' >>~/.bashrc
+    bash
     mvn -version
     if [ ! $? -eq 0 ]; then
       echo "Error Installing Maven try reloading the terminal or check the installation manually"

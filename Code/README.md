@@ -15,6 +15,15 @@ Before compile any executor ensure to install the following requirements:
 - ssh server
 - G++ compiler
 
+```console
+sudo apt install -y postgresql-common \
+    postgresql-client-14 \
+    postgresql-14 \
+    postgresql-server-dev-14 \
+    postgresql-contrib \
+    postgresql-server-dev-all
+```
+
 for each case
 
 ## Collector
