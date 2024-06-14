@@ -16,7 +16,7 @@ def start(config, console_command):
     os.environ["COLLECTOR_ENDPOINT"]=config["collector_endpoint"]
     os.environ["SOCKET_PORT"]=config["observer_port"]
 
-    make_process = subprocess.Popen([console_command, "--", "sudo", "-E", "./julietX"], 
+    make_process = subprocess.Popen(["sudo", "-E", "./julietX"], 
                                   cwd=observer_dir)
     if not (make_process.poll() is None):
         print("Error starting Observer")
