@@ -2,11 +2,11 @@
     "consoleCommand": "gnome-terminal",
     "orchestrators": {
         "postgres": {
-            "address": "159.90.9.4",
+            "address": "159.90.9.6",
             "port": "43316"
         },
         "mongo": {
-            "address": "159.90.9.5",
+            "address": "159.90.9.9",
             "port": "43316"
         }
     },
@@ -38,7 +38,7 @@
     },
     "clientObservers": {
         "postgres": {
-            "address": "159.90.9.5",
+            "address": "159.90.9.6",
             "port": "43316"
         },
         "mongo": {
