@@ -38,6 +38,9 @@ for each case
 - Java 17
 
 ## Analyst
+```
+sudo apt get install libpq-dev
+```
 - Python3 and its requirementes in the file requirements.txt
 
 

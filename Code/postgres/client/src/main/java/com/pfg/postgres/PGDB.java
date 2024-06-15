@@ -104,6 +104,7 @@ public class PGDB extends GenericDatabase {
     public void dropDatabase() {
         try {
             System.out.println("Dropping Database");
+            System.out.println("jdbc:postgresql://" + host + ":" + port + "/" + user + ":" + password);
             Connection c = DriverManager
                     .getConnection("jdbc:postgresql://" + host + ":" + port + "/", user, password);
             Statement statement = c.createStatement();
