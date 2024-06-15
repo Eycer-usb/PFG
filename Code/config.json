@@ -39,21 +39,21 @@
     "clientObservers": {
         "postgres": {
             "address": "159.90.9.6",
-            "port": "43316"
+            "port": "43317"
         },
         "mongo": {
             "address": "159.90.9.9",
-            "port": "43316"
+            "port": "43317"
         }
     },
     "serverObservers": {
         "postgres": {
             "address": "159.90.9.4",
-            "port": "43317"
+            "port": "43316"
         },
         "mongo": {
             "address": "159.90.9.5",
-            "port": "43317"
+            "port": "43316"
         }
     },
     "collector": {
