@@ -8,6 +8,12 @@ Before compile any executor ensure to install the following requirements:
 - ssh client
 - G++ compiler
 
+```console
+sudo apt install -y openjdk-17-jdk \
+    openjdk-17-jre \
+    libcurl4-openssl-dev
+```
+
 ## For server
 
 - Postgresql
