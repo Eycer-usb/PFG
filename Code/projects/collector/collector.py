@@ -39,7 +39,7 @@ def prepare_resources(config):
 
 def start(config):
     collector_jar = "projects/collector/target/collector-0.0.1-SNAPSHOT.jar"
-    proc = subprocess.Popen([config["consoleCommand"], "--", "java", "-jar", 
+    proc = subprocess.Popen([ "java", "-jar", 
                             collector_jar ],
                         cwd="./")
     return proc

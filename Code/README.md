@@ -36,6 +36,8 @@ for each case
 ## Collector
 - Maven
 - Java 17
+- Postgresql (With database collector created)
+
 
 ## Analyst
 ```
