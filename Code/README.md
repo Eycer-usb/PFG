@@ -12,12 +12,13 @@ Before compile any executor ensure to install the following requirements:
 sudo apt install -y openjdk-17-jdk \
     openjdk-17-jre \
     libcurl4-openssl-dev
+    
+sudo apt-get install --reinstall libpq-dev
 ```
 
-## For server
+## For server Postgres
 
 - Postgresql
-- MongoDB
 - ssh server
 - G++ compiler
 
@@ -32,6 +33,12 @@ sudo apt install -y postgresql-common \
 ```
 
 for each case
+
+## For server Mongo
+- Mongodb
+```console
+sudo apt install -y libcurl4-openssl-dev
+```
 
 ## Collector
 - Maven

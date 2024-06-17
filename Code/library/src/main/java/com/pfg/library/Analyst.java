@@ -38,7 +38,7 @@ public class Analyst extends Communicable {
             System.out.println("Received option: " + message);
             sendReceivedConfirmation();
             this.orchestrator.selectOption(message);
-            send(String.valueOf(this.orchestrator.execute()));
+            this.orchestrator.execute();
         }
         else {
             System.out.println("Error applying option " + message);

@@ -88,7 +88,7 @@ def open(config):
     else:
         print("Error Sending Option")
 
-    input("")
+    input("Press Enter to Exit...")
     # close(selected_socket)
 
 
