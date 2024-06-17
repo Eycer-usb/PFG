@@ -18,7 +18,8 @@ def create(host, port, db_name, optimizations):
     HOST = host,
     PORT = int(port,)
     DB_NAME = db_name
-    db = Mongo_TPCH(HOST, PORT, DB_NAME, optimizations=optimizations)
+    TPCH_DBGEN = "tpch-dbgen"
+    db = Mongo_TPCH(HOST, PORT, DB_NAME, TPCH_DBGEN, optimizations=optimizations)
     db.generate()
 
 def generate_queries():

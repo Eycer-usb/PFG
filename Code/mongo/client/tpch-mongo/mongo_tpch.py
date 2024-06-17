@@ -3,6 +3,8 @@ import csv
 import json
 import threading
 from datetime import datetime
+import subprocess
+import os
 
 """
 Mongo TPCH class to manage every aspect of TPCH benchmark generation
@@ -11,7 +13,7 @@ Methods:
 - generate          Create the data base with the data
 """
 class Mongo_TPCH:
-    def __init__(self, host, port, db_name, chunk_size=100000, threads_number=4, optimizations=[]):
+    def __init__(self, host, port, db_name, tpch_dbgen, chunk_size=100000, threads_number=4, optimizations=[]):
         self.host = host
         self.port = port
         self.db_name = db_name
@@ -30,6 +32,7 @@ class Mongo_TPCH:
         self.chunk_size = chunk_size
         self.compression = "compression" in optimizations
         self.index = "index" in optimizations
+        self.tpch_dbgen = tpch_dbgen
 
     def __del__(self):
         self.client.close()
@@ -101,7 +104,17 @@ class Mongo_TPCH:
 
                 
 
+    def generate_data(self):
+        dbgen_dir = ""
+        p = subprocess.Popen([os.path.join(".", "dbgen"), "-vf", "-s", str(1.0)], cwd=self.tpch_dbgen)
+        p.communicate()
+        if not p.returncode:
+            print("generated data for the load phase")
+        else:
+            exit(-2)
+        
     def generate(self):
+        self.generate_data()
         for collection in self.collections:
             self.set_collection(collection)
         self.apply_optimizations()
