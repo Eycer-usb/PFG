@@ -178,21 +178,15 @@ class Mongo_TPCH:
         self.db['part'].create_index([('P_TYPE'.lower(), 1)])
         self.db['part'].create_index([('P_SIZE'.lower(), 1)])
         self.db['part'].create_index([('P_BRAND'.lower(), 1)])
-        self.db['part'].create_index([('P_PARTKEY'.lower(), 1)])
         self.db['part'].create_index([('P_CONTAINER'.lower(), 1)])
 
-        self.db['orders'].create_index([('O_ORDERKEY'.lower(), 1)])
         self.db['orders'].create_index([('O_ORDERDATE'.lower(), 1)])
         self.db['orders'].create_index([('O_ORDERSTATUS'.lower(), 1)])
 
-        self.db['supplier'].create_index([('S_SUPPKEY'.lower(), 1)])
-
-        self.db['customer'].create_index([('C_CUSTKEY'.lower(), 1)])
         self.db['customer'].create_index([('C_ACCTBAL'.lower(), 1)])
 
         self.db['nation'].create_index([('N_NAME'.lower(), 1)])
 
         self.db['region'].create_index([('R_NAME'.lower(), 1)])
-        self.db['region'].create_index([('r_REGIONKEY'.lower(), 1)])
 
     
