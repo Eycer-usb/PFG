@@ -20,7 +20,7 @@ public class Query1 extends Query {
         public void run(MongoDatabase database) {
                 MongoCollection<Document> collection = database.getCollection("lineitem");
 
-                LocalDate date = LocalDate.parse("1998-12-01").minusDays(Integer.parseInt(args[0]));
+                LocalDate date = LocalDate.parse("1998-12-01").minusDays(3);
                 Bson filter = Filters.lte("l_shipdate", date.toString());
                 Bson group = Aggregates.group(
                                 new Document("returnFlag", "$l_returnflag")
@@ -55,5 +55,6 @@ public class Query1 extends Query {
                                 group,
                                 Aggregates.sort(sort),
                                 limit)).forEach(document -> System.out.println(document.toJson()));
+                
         }
 }

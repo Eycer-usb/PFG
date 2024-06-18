@@ -53,10 +53,10 @@ public class Query20 extends Query {
                                                                                                                                 "$$suppkey")),
                                                                                                 new Document("$gte",
                                                                                                                 Arrays.asList("$l_shipdate",
-                                                                                                                                new Date("1996-01-01"))),
+                                                                                                                                new Date(1996 -1900, 1,1))),
                                                                                                 new Document("$lt",
                                                                                                                 Arrays.asList("$l_shipdate",
-                                                                                                                                new Date("1997-01-01"))))))),
+                                                                                                                                new Date(1997 - 1900, 1, 1))))))),
                                                                 new Document("$group", new Document("_id", new Document(
                                                                                 "l_partkey", "$l_partkey")
                                                                                 .append("l_suppkey", "$l_suppkey"))

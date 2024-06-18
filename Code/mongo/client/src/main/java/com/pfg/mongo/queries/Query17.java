@@ -1,5 +1,4 @@
 package com.pfg.mongo.queries;
-
 import java.util.Arrays;
 
 import com.mongodb.client.AggregateIterable;
