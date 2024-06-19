@@ -135,7 +135,7 @@ void Executor::startMonitoring(long pid){
 void Executor::stopMonitoring(){
     printf(ACTION "Monitoring Stoped" ENDL);
     this->metrics = this->monitor->stop();
-    printf(ACTION "Metrics: %f and %f" ENDL, this->metrics.first, this->metrics.second );
+    printf(ACTION "Metrics: %Lf and %Lf" ENDL, this->metrics.first, this->metrics.second );
     this->monitorThread->join();
     this->sendSuccess();
 }
@@ -149,11 +149,11 @@ void Executor::closeConnection() {
 
 void Executor::reportToCollector(long directiveIdFk) {
     printf(ACTION "Reporting to Collector" ENDL);
-    printf(ACTION "Reporting %f and %f" ENDL, this->metrics.first, this->metrics.second );
+    printf(ACTION "Reporting %Lf and %Lf" ENDL, this->metrics.first, this->metrics.second );
     char body[1024];
     sprintf(body, "{\
     \"directiveIdFk\": %li,\
-    \"energyConsumed\": \"%.3f\",\
+    \"energyConsumed\": \"%Lf\",\
     \"cpuUsage\": \"%s\"\
     }",
     directiveIdFk, this->metrics.second, "N/A");
