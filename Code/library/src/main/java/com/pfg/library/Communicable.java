@@ -52,7 +52,10 @@ public abstract class Communicable {
             System.out.println("Sending Message " + message);
             output.println(message);
             System.out.println("Waiting Reception Confirmation");
-            String response = input.readLine();
+            String response = null;
+            while ( response == null) {
+                response = input.readLine();
+            }
             System.out.println("Response: " + response);
             return response;
         } catch (Exception e) {

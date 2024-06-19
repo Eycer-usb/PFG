@@ -55,8 +55,8 @@ pair<long double, long double> JulietMonitor::stop()
     if (this->energy.size() == 0)
     {
         cout << "No energy consumed" << endl;
-        energyMeasured.first = 0;
-        energyMeasured.second = 0;
+        energyMeasured.first = 0.0;
+        energyMeasured.second = 0.0;
         return energyMeasured;
     }
     // Print last energy consumed
