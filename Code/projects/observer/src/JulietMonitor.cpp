@@ -31,6 +31,7 @@ void JulietMonitor::start(int pid)
     {
         this->started_signal = true;
         vector<map<string, double>> sample = this->takeSample();
+        printf("Sample size: %d\n", int(sample.size()));
 
         if (sample.size() == 0)
         {
@@ -64,6 +65,8 @@ pair<double, double> JulietMonitor::stop()
     cout << "Energy consumed by process: " << this->energy[this->energy.size() - 1] << " J" << endl;
     energyMeasured.first = this->sysEnergy[this->energy.size() - 1];
     energyMeasured.second = this->energy[this->energy.size() - 1];
+    //this->energy = vector<double>();
+    //this->sysEnergy = vector<double>();
     return energyMeasured;
 }
 
