@@ -54,9 +54,9 @@ void RaplLinux::initializate()
 
 }
 
-double RaplLinux::getCurrentEnergy()
+long long int RaplLinux::getCurrentEnergy()
 {
-    double energy = 0;
+    long long int energy = 0;
     for (auto raplFile : this->raplFilesToRead)
     {
         fstream file;
@@ -77,7 +77,7 @@ double RaplLinux::getCurrentEnergy()
     return energy;
 }
 
-double RaplLinux::getInitialEnergy()
+long long int RaplLinux::getInitialEnergy()
 {
     return this->getCurrentEnergy();
 }

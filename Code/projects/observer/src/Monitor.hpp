@@ -8,7 +8,7 @@ public:
     Monitor() {};
     virtual ~Monitor() {};
     virtual void start(int pid) = 0;
-    virtual std::pair<double, double> stop() = 0;
+    virtual std::pair<long double, long double> stop() = 0;
     virtual bool isMonitoring() = 0;
 };
 

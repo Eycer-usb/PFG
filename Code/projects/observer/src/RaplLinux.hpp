@@ -18,8 +18,8 @@ public:
     RaplLinux();
     ~RaplLinux();
     void initializate() override;
-    double getInitialEnergy() override;
-    double getCurrentEnergy() override;
+    long long int getInitialEnergy() override;
+    long long int getCurrentEnergy() override;
     std::array <string, 3> getPowercapPath();
     std::vector <string> raplFilesToRead = {};
 };

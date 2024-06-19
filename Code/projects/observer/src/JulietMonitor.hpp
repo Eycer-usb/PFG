@@ -21,8 +21,8 @@ private:
     map<int, double> cpuUseByPid;
     map<int, double> energyByPid;
     vector<double> power;
-    vector<double> energy;
-    vector<double> sysEnergy;
+    vector<long double> energy;
+    vector<long double> sysEnergy;
     System* sys;
     Cpu* cpu;
 
@@ -30,11 +30,11 @@ public:
     JulietMonitor(double samplingRate, double samplingTime);
     ~JulietMonitor();
     void start(int pid);
-    pair<double, double> stop();
+    pair<long double, long double> stop();
     bool isMonitoring();
-    void updateEnergy(vector<map<string,double>> sample);
-    vector<map<string,double>>  takeSample();
-    double getEnergyConsumed(map<string,double> iteration);
+    void updateEnergy(vector<map<string,long double>> sample);
+    vector<map<string, long double>>  takeSample();
+    long double getEnergyConsumed(map<string, long double> iteration);
 };
 
 #endif // JULIET_MONITOR_HPP

@@ -10,8 +10,8 @@ class Cpu
 {    
 public:
     virtual void initializate() = 0;
-    virtual double getInitialEnergy() = 0;
-    virtual double getCurrentEnergy() = 0;
+    virtual long long int getInitialEnergy() = 0;
+    virtual long long int getCurrentEnergy() = 0;
 };
 
 #endif // CPU_HPP
