@@ -135,6 +135,7 @@ void Executor::startMonitoring(long pid){
 void Executor::stopMonitoring(){
     printf(ACTION "Monitoring Stoped" ENDL);
     this->metrics = this->monitor->stop();
+    printf(ACTION "Metrics: %f and %f" ENDL, this->metrics.first, this->metrics.second );
     this->monitorThread->join();
     this->sendSuccess();
 }
