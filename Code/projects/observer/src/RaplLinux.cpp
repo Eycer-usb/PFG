@@ -74,7 +74,7 @@ double RaplLinux::getCurrentEnergy()
             exit(EXIT_FAILURE);
         }
     }
-    return energy / 1000000; // Convert from uJ to J
+    return energy;
 }
 
 double RaplLinux::getInitialEnergy()
