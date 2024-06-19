@@ -31,7 +31,8 @@ void JulietMonitor::start(int pid)
     {
         this->started_signal = true;
         vector<map<string, double>> sample = this->takeSample();
-        printf("Sample size: %d\n", int(sample.size()));
+        printf("Energy size: %d\n", this->energy.size());
+        printf("Sys Energy size: %d\n", this->sysEnergy.size());
 
         if (sample.size() == 0)
         {
