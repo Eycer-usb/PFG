@@ -225,8 +225,8 @@ public class PGDB extends GenericDatabase {
             close();
             dropDatabase();
             createDatabase();
-            loadBenchmark(true, false);
             prepareBenchmark();
+            loadBenchmark(true, false);
             connect();
             executeFile(optimizationsDir + "/index.sql");
             close();
