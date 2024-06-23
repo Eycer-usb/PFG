@@ -72,10 +72,6 @@ def locate_config_folder():
     return folder, str(pg_conf.splitlines()[2]).strip()
 
 def update_config(location, pg_conf): 
-    # Copping compress config file
-    if(os.path.exists(os.path.join(location, "compress.conf"))):
-        print("Config Already set")
-        return
     print("Updating Postgres config")
     compress_config = "postgres/server/compress.conf"
     p = subprocess.run(["sudo", 'cp', compress_config, location ], 
