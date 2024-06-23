@@ -163,14 +163,14 @@ public class PGDB extends GenericDatabase {
         System.out.println("Loading Benchmark in database");
         String cwd = "postgres/client/tpch-pgsql";
         String action = "load";
-        String compression_flag = "-z";
+        String decompression_flag = "-z";
         String[] args;
         if(compression) {
             args = new String[]{
                 "python3",
                 "tpch_pgsql.py", action,
                 "-H", host, "-p", String.valueOf(port),
-                "-U", user, "-W", password, "-d", databaseName, compression_flag
+                "-U", user, "-W", password, "-d", databaseName
             };
         }
         else{
@@ -178,7 +178,7 @@ public class PGDB extends GenericDatabase {
                 "python3",
                 "tpch_pgsql.py", action,
                 "-H", host, "-p", String.valueOf(port),
-                "-U", user, "-W", password, "-d", databaseName
+                "-U", user, "-W", password, "-d", databaseName, decompression_flag
             };
         }
         try {
