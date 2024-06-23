@@ -38,7 +38,7 @@ done
 
 # Install Maven
 
-if [ $maven  = true]; then
+if [ $maven  = true ]; then
   mvn -version
   if [ ! $? -eq 0 ]; then
     wget https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
@@ -64,11 +64,6 @@ if [ ${client} = true ]; then
   sudo apt install -y openjdk-17-jdk \
     openjdk-17-jre \
     libcurl4-openssl-dev
-
-  cd ../../library
-  mvn clean install package
-
-  pip3 install pymongo # For Mongo benchmark generator
 fi
 
 
