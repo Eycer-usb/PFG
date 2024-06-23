@@ -1,0 +1,46 @@
+{
+    "consoleCommand": "gnome-terminal",
+    "orchestrators": {
+        "postgres": {
+            "address": "159.90.9.10",
+            "port": "43316"
+        }
+    },
+    "databases": {
+        "postgres": {
+            "host": "159.90.9.6",
+            "port": "5432",
+            "name": "tpch",
+            "user": "postgres",
+            "password": "Juan3:16",
+            "rootPassword": "123456",
+            "sshPort": "22",
+            "restartCommand": "systemctl restart postgresql",
+            "optimizationsDirectory": "postgres/client/optimization",
+            "queriesDirectory": "postgres/client/tpch-pgsql/query_root/perf_query_gen"
+        }
+    },
+    "clientObservers": {
+        "postgres": {
+            "address": "159.90.9.10",
+            "port": "43317"
+        }
+    },
+    "serverObservers": {
+        "postgres": {
+            "address": "159.90.9.6",
+            "port": "43316"
+        }
+    },
+    "collector": {
+        "port": "43317",
+        "db_host": "159.90.9.19",
+        "db_port": "5432",
+        "db_password": "********",
+        "db_user": "collector",
+        "directive": "http://159.90.9.19:43317/api/v1/directives/add",
+        "client-metrics": "http://159.90.9.19:43317/api/v1/client-metrics/add",
+        "server-metrics": "http://159.90.9.19:43317/api/v1/server-metrics/add",
+        "analyst-get-all": "http://159.90.9.19:43317/api/v1/analyst/getAll"
+    }
+}

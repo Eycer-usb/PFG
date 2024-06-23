@@ -16,6 +16,12 @@ sudo apt install -y openjdk-17-jdk \
 sudo apt-get install --reinstall libpq-dev
 ```
 
+If found any problem with the mongo or postgres database generation:
+```console
+sudo chmod -R 777 Code/mongo/client/tpch-mongo/tpch-dbgen 
+sudo chmod -R 777 Code/postgres/client/tpch-pgsql/tpch-dbgen
+```
+
 ## For server Postgres
 
 - Postgresql
