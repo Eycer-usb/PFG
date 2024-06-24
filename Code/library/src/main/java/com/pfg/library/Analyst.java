@@ -16,14 +16,17 @@ public class Analyst extends Communicable {
     }
 
     public void start(int port) {
-        try {
-            System.out.println("Waiting analyst connection request");
-            listen(port);
-            this.sendOptions();
-            this.talk();
-        } catch (IOException e) {
-            System.out.println("Error Starting Analyst, is the port " + port + " available?");
-            e.printStackTrace();
+        while (true) {
+            try {
+                System.out.println("Waiting analyst connection request");
+                listen(port);
+                this.sendOptions();
+                this.talk();
+            } catch (IOException e) {
+                System.out.println("Error Starting Analyst, is the port " + port + " available?");
+                this.disconnect();
+                e.printStackTrace();
+            }
         }
     }
 
@@ -33,17 +36,16 @@ public class Analyst extends Communicable {
     }
 
     @Override
-    protected void manageMessage(String message){
+    protected void manageMessage(String message) {
         if (this.orchestrator.isValidOption(message)) {
             System.out.println("Received option: " + message);
             sendReceivedConfirmation();
             this.orchestrator.selectOption(message);
             this.orchestrator.execute();
-        }
-        else {
+        } else {
             System.out.println("Error applying option " + message);
         }
-        
+
     }
 
 }
