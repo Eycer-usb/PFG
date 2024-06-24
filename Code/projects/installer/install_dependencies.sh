@@ -50,6 +50,7 @@ if [ $maven  = true ]; then
     echo 'export PATH=$M2:$PATH' >>~/.bashrc
     bash
     mvn -version
+    exit
     if [ ! $? -eq 0 ]; then
       echo "Error Installing Maven try reloading the terminal or check the installation manually"
     fi
