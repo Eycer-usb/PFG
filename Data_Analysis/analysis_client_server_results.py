@@ -112,7 +112,7 @@ def plot_queries_energy_comparation(optimization_key, database_key, results):
     figure.subplots_adjust(top=0.8)
     figure.suptitle('{} database - Optimization {}'.format(database_key.capitalize(), optimization_key), y=0.98)
     axis[0].bar(key, values_client, color = 'b')
-    axis[0].set_title('Client Energy Consumed optimization')
+    axis[0].set_title('Client Energy Consumed')
     axis[0].set_xlabel('Query')
     axis[0].set_ylabel('Energy Consumed (J)')
     axis[0].set_ylim(0, 50)
@@ -168,21 +168,88 @@ def plot_mean_energy_by_optimization(database_key, results):
     axis[1].legend()
     plt.savefig('figures/{}-means_energy_by_optimization.png'.format(database_key))
     
+    
+def plot_queries_time_comparation(optimization_key, database_key, results):
+    values = []
+    filtered_results = results.loc[ \
+                ((df['database_key'] == database_key) &\
+                    (df['optimization_key'] == optimization_key) &\
+                    (df['execution_time'] > 0)
+                )]
+    
+    key = [i for i in range(1,23)]
+    for i in key:
+        result_query = filtered_results.loc[filtered_results['query_key'] == i]
+        values.append(result_query['execution_time'].mean() / 1000) #Seconds
+    
+    figure = plt.figure(constrained_layout=True)
+    figure.tight_layout(w_pad=5, h_pad=5)
+    figure.subplots_adjust(top=0.8)
+    figure.suptitle('{} database - Optimization {}'.format(database_key.capitalize(), optimization_key), y=0.98)
+    plt.bar(key, values, color = 'b')
+    plt.title('Execution Time')
+    plt.xlabel('Query')
+    plt.ylabel('Time (Sec)')
+    
+    
+    plt.savefig('figures/{}-{}-queries_time_comparation.png'.format(database_key, optimization_key))
+    
+    
+    
 
+
+def plot_mean_time_by_optimization(database_key, results):
+    values = []
+    colors = ['b', 'r', 'g', 'y']
+    optimizations = get_optimizations(results)
+    
+    for optimization_key in optimizations:
+        filtered_results = results.loc[ \
+                ((df['database_key'] == database_key) &\
+                    (df['optimization_key'] == optimization_key) &\
+                    (df['execution_time'] > 0)
+                        )]
+        values.append(filtered_results['execution_time'].mean() / 1000)
+        
+    figure, axis = plt.subplots(1, 1, constrained_layout=True)
+    figure.tight_layout(w_pad=5, h_pad=5)
+    figure.subplots_adjust(top=0.8)
+    figure.suptitle('{} database'.format(database_key.capitalize()), y=0.98)
+    for i, optimization in enumerate(optimizations):
+        axis.bar(optimization, values[i], color = colors[i], label = optimization)
+        
+    axis.set_title('Execution Time')
+    axis.set_xlabel('Optimization')
+    axis.set_ylabel('Mean Execution Time (Sec)')
+    axis.get_xaxis().set_visible(False)
+    axis.legend()
+    
+    plt.savefig('figures/{}-means_time_by_optimization.png'.format(database_key))
 
 
 def plots(results, postgres_analysis, mongo_analysis):
     print("Generating plots...")
     optimizations = get_optimizations(df)
+    # Energy
     for optimization_key in optimizations:
         plot_queries_energy_comparation(optimization_key, "postgres", results)
         
     for optimization_key in optimizations:
             plot_queries_energy_comparation(optimization_key, "mongodb", results)
+            
 
     plot_mean_energy_by_optimization("postgres", results)
     plot_mean_energy_by_optimization("mongodb", results)
 
+    # Execution Time
+    for optimization_key in optimizations:
+        plot_queries_time_comparation(optimization_key, "postgres", results)
+        
+    for optimization_key in optimizations:
+            plot_queries_time_comparation(optimization_key, "mongodb", results)
+            
+    plot_mean_time_by_optimization("postgres", results)
+    plot_mean_time_by_optimization("mongodb", results)
 
 
 if "__main__" == __name__:
