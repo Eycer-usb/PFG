@@ -114,13 +114,13 @@ def plot_queries_energy_comparation(optimization_key, database_key, results):
     axis[0].bar(key, values_client, color = 'b')
     axis[0].set_title('Client Energy Consumed')
     axis[0].set_xlabel('Query')
-    axis[0].set_ylabel('Energy Consumed (J)')
+    axis[0].set_ylabel('Energy Consumed (mJ)')
     axis[0].set_ylim(0, 50)
     
     axis[1].bar(key, values_server, color = 'r')
     axis[1].set_title('Server Energy Consumed')
     axis[1].set_xlabel('Query')
-    axis[1].set_ylabel('Energy Consumed (KJ)')
+    axis[1].set_ylabel('Energy Consumed (J)')
     
     plt.savefig('figures/{}-{}-queries_energy_comparation.png'.format(database_key, optimization_key))
     
@@ -156,14 +156,14 @@ def plot_mean_energy_by_optimization(database_key, results):
         
     axis[0].set_title('Client Energy Consumed')
     axis[0].set_xlabel('Optimization')
-    axis[0].set_ylabel('Mean Energy Consumed (J)')
+    axis[0].set_ylabel('Mean Energy Consumed (mJ)')
     axis[0].get_xaxis().set_visible(False)
     axis[0].legend()
     axis[0].set_ylim(0,50)
     
     axis[1].set_title('Server Energy Consumed')
     axis[1].set_xlabel('Optimization')
-    axis[1].set_ylabel('Mean Energy Consumed (KJ)')
+    axis[1].set_ylabel('Mean Energy Consumed (J)')
     axis[1].get_xaxis().set_visible(False)
     axis[1].legend()
     plt.savefig('figures/{}-means_energy_by_optimization.png'.format(database_key))
