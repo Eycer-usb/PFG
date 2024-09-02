@@ -14,7 +14,7 @@ def wilcoxon(column_name, df1, df2):
     return stats.wilcoxon(group1[0:lenght], group2[0:lenght])
 
 def apply_analysis(df):
-    header = [ "{}-{}-{}".format(optimization, metric, stat) for optimization in get_optimizations(df) for metric in ['client_energy_consumed', 'server_energy_consumed'] for stat in ['mean', 'std', 'wilcoxon_p-value']]
+    header = [ "{}-{}-{}".format(optimization, metric, stat) for optimization in get_optimizations(df) for metric in ['client_energy_consumed', 'server_energy_consumed'] for stat in ['mean', 'std', 'wilcoxon_p-value', 'execution-mean']]
     result = pd.DataFrame(columns= header)
     for query in range(1,23):
         row = []
@@ -22,7 +22,7 @@ def apply_analysis(df):
             query_optimization_result = df.loc[ \
                 ((df['optimization_key'] == optimization) &\
                 (df['query_key'] == query) &\
-                (df['client_energy_consumed'] > 0) &\
+                (df['client_energy_consumed'] >= 0) &\
                 (df['client_energy_consumed'] != 0) &\
                 (df['server_energy_consumed'] != 0) &\
                 (df['server_energy_consumed'] > 0)
@@ -45,11 +45,14 @@ def apply_analysis(df):
                     wilcoxon( var, g1, base ) for var in ['client_energy_consumed', 'server_energy_consumed']
                 ]
                 row = row + [means['client_energy_consumed'], stds['client_energy_consumed'], 
-                         wilcoxons[0].pvalue, means['server_energy_consumed'], stds['server_energy_consumed'], wilcoxons[1].pvalue]
+                         wilcoxons[0].pvalue, means['server_energy_consumed'], stds['server_energy_consumed'], wilcoxons[1].pvalue,
+                         means['execution_time']
+                         ]
             else:
                 wilcoxons = ["N/A", "N/A"]
                 row = row + [means['client_energy_consumed'], stds['client_energy_consumed'], 
-                         wilcoxons[0], means['server_energy_consumed'], stds['server_energy_consumed'], wilcoxons[1]]
+                         wilcoxons[0], means['server_energy_consumed'], stds['server_energy_consumed'], wilcoxons[1], 
+                         means['execution_time']]
             
         result.loc[len(result)] = row
     return result
