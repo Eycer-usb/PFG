@@ -26,8 +26,8 @@ def apply_analysis(df):
             query_optimization_result = df.loc[ \
                 ((df['optimization_key'] == optimization) &\
                 (df['query_key'] == query) &\
-                (df['client_energy_consumed'] >= 0) &\
-                (df['server_energy_consumed'] >= 0)
+                (df['client_energy_consumed'] > 0) &\
+                (df['server_energy_consumed'] > 0)
                     )]
             query_optimization_result = query_optimization_result[['execution_time', 'client_energy_consumed', 'server_energy_consumed']]
             means = query_optimization_result.mean( skipna = True )
@@ -37,8 +37,8 @@ def apply_analysis(df):
             base = df.loc[ \
                 ((df['query_key'] == query) &\
                     (df['optimization_key'] == 'base') &\
-                    (df['client_energy_consumed'] >= 0) &\
-                    (df['server_energy_consumed'] >= 0)
+                    (df['client_energy_consumed'] > 0) &\
+                    (df['server_energy_consumed'] > 0)
                         )]
             if(optimization != "base"):
                 wilcoxons = [
@@ -99,8 +99,6 @@ def plot_queries_energy_comparation(optimization_key, database_key, results):
                 ((df['database_key'] == database_key) &\
                     (df['optimization_key'] == optimization_key) &\
                     (df['client_energy_consumed'] > 0) &\
-                    (df['client_energy_consumed'] != 0) &\
-                    (df['server_energy_consumed'] != 0) &\
                     (df['server_energy_consumed'] > 0)
                         )]
     key = [i for i in range(1,23)]
